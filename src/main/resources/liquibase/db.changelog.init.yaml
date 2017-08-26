@@ -1,0 +1,3103 @@
+databaseChangeLog:
+- changeSet:
+    id: 1498896388074-2
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_UUID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_BUILDID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_DATE
+            type: date
+        - column:
+            name: F_AUTHOR
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_CREATETIME
+            type: date
+        - column:
+            name: F_GROUPID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_FILENAME
+            type: VARCHAR2(500 BYTE)
+        - column:
+            name: F_FILE
+            type: BLOB
+        tableName: T_BA_AUDIT
+- changeSet:
+    id: 1498896388074-3
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: F_NAME
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_MODBUSTYPE
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: F_MODBUSADDRESS
+            type: NUMBER(4, 0)
+        - column:
+            constraints:
+              nullable: false
+            defaultValueNumeric: !!float '0'
+            name: F_VALUE
+            type: NUMBER(6, 0)
+        - column:
+            name: F_TYPE
+            type: NUMBER(2, 0)
+        - column:
+            name: F_REMARK
+            type: VARCHAR2(100 BYTE)
+        tableName: T_BC_CONTROLAIR
+- changeSet:
+    id: 1498896388074-4
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_BUILDID
+            remarks: 建筑uuid
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_DATACENTERID
+            remarks: 数据中心代码
+            type: CHAR(6 BYTE)
+        - column:
+            name: F_BUILDNAME
+            remarks: 建筑名称
+            type: VARCHAR2(48 BYTE)
+        - column:
+            name: F_ALIASNAME
+            remarks: 建筑字母别名
+            type: VARCHAR2(16 BYTE)
+        - column:
+            name: F_BUILDOWNER
+            remarks: 建筑业主
+            type: VARCHAR2(80 BYTE)
+        - column:
+            name: F_STATE
+            remarks: 建筑监测状态
+            type: NUMBER(1, 0)
+        - column:
+            name: F_DISTRICTCODE
+            remarks: 所属行政区划
+            type: CHAR(6 BYTE)
+        - column:
+            name: F_BUILDADDR
+            remarks: 建筑地址
+            type: VARCHAR2(80 BYTE)
+        - column:
+            name: F_BUILDLONG
+            remarks: 建筑坐标-经度
+            type: NUMBER(18, 4)
+        - column:
+            name: F_BUILDLAT
+            remarks: 建筑坐标-纬度
+            type: NUMBER(18, 4)
+        - column:
+            name: F_BUILDYEAR
+            remarks: 建设年代
+            type: NUMBER(4, 0)
+        - column:
+            name: F_UPFLOOR
+            remarks: 地上建筑层数
+            type: NUMBER(4, 0)
+        - column:
+            name: F_DOWNFLOOR
+            remarks: 地下建筑层数
+            type: NUMBER(4, 0)
+        - column:
+            name: F_BUILDFUNC
+            remarks: 建筑功能
+            type: CHAR(1 BYTE)
+        - column:
+            name: F_TOTALAREA
+            remarks: 建筑总面积
+            type: NUMBER(18, 4)
+        - column:
+            name: F_AIRAREA
+            remarks: 空调面积
+            type: NUMBER(18, 4)
+        - column:
+            name: F_HEATAREA
+            remarks: 采暖面积
+            type: NUMBER(18, 4)
+        - column:
+            name: F_AIRTYPE
+            remarks: 建筑空调系统形式
+            type: CHAR(1 BYTE)
+        - column:
+            name: F_HEATTYPE
+            remarks: 建筑采暖系统形式
+            type: CHAR(1 BYTE)
+        - column:
+            name: F_BODYCOEF
+            remarks: 建筑体型系数
+            type: NUMBER(18, 4)
+        - column:
+            name: F_STRUTYPE
+            remarks: 建筑结构形式
+            type: CHAR(1 BYTE)
+        - column:
+            name: F_WALLMATTYPE
+            remarks: 建筑外墙材料形式
+            type: CHAR(1 BYTE)
+        - column:
+            name: F_WALLWARMTYPE
+            remarks: 建筑外墙保温形式
+            type: CHAR(1 BYTE)
+        - column:
+            name: F_WALLWINTYPE
+            remarks: 建筑外窗类型
+            type: CHAR(1 BYTE)
+        - column:
+            name: F_GLASSTYPE
+            remarks: 建筑玻璃类型
+            type: CHAR(1 BYTE)
+        - column:
+            name: F_WINFRAMETYPE
+            remarks: 窗框材料类型
+            type: CHAR(1 BYTE)
+        - column:
+            name: F_ISSTANDARD
+            remarks: 是否是标杆建筑
+            type: NUMBER(1, 0)
+        - column:
+            name: F_DESIGNDEPT
+            remarks: 监测方案设计单位
+            type: VARCHAR2(64 BYTE)
+        - column:
+            name: F_WORKDEPT
+            remarks: 监测工程实施单位
+            type: VARCHAR2(64 BYTE)
+        - column:
+            name: F_CREATETIME
+            remarks: 录入时间
+            type: date
+        - column:
+            name: F_CREATEUSER
+            remarks: 创建操作员名称
+            type: VARCHAR2(32 BYTE)
+        - column:
+            name: F_MONITORDATE
+            remarks: 开始监测日期
+            type: date
+        - column:
+            name: F_ACCEPTDATE
+            remarks: 能耗监测工程验收日期
+            type: date
+        - column:
+            name: F_ZEROFLOOR
+            remarks: 是否有架空层
+            type: NUMBER(1, 0)
+        - column:
+            name: F_BUILDCODE
+            remarks: 建筑编码
+            type: CHAR(10 BYTE)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_RATED_ELEC
+            remarks: 额定电耗（月kwh），用于计算能耗排名
+            type: NUMBER(10, 1)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_RATED_WATER
+            remarks: 额定水耗（月t），用于计算能耗排名
+            type: NUMBER(10, 1)
+        - column:
+            name: F_PEOPLE
+            remarks: 楼栋人数
+            type: NUMBER(10, 0)
+        - column:
+            name: F_OPERATION
+            type: VARCHAR2(1 BYTE)
+        remarks: |-
+          注1：行政区划代码参照民政部最新的全国行政区划规定，可细化到区。如果是国家（中央）直属单位或高校的建筑、省级直属单位或高校的建筑，则使用建筑所在城区的行政区划代码
+          注2：建筑功能、建筑空调系统形式、建筑采暖系统形式、建筑结构形式、建筑外墙材料形式、建筑外墙保温形式、建筑外窗类型、建筑玻璃类型、窗框材料类型等字段的可选值参见《分项能耗数据采集技术导则》，部分已有所扩展。
+        tableName: T_BD_BUILD
+- changeSet:
+    id: 1498896388074-5
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_BUILDGROUPID
+            remarks: 建筑群uuid
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_BUILDGROUPNAME
+            remarks: 建筑群名称
+            type: VARCHAR2(48 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_GROUPALIASNAME
+            remarks: 建筑群字母别名
+            type: VARCHAR2(16 BYTE)
+        - column:
+            name: F_GROUPDESC
+            remarks: 建筑群描述
+            type: VARCHAR2(800 BYTE)
+        - column:
+            name: F_BUILDGROUPCODE
+            remarks: 建筑群编码
+            type: CHAR(10 BYTE)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_RATED_ELEC
+            remarks: 额定电耗（月kwh），用于计算能耗排名
+            type: NUMBER(10, 1)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_RATED_WATER
+            remarks: 额定水耗（月t），用于计算能耗排名
+            type: NUMBER(10, 1)
+        - column:
+            name: F_AREA
+            remarks: 面积
+            type: NUMBER(10, 4)
+        - column:
+            name: F_PEOPLE
+            remarks: 总人数
+            type: NUMBER(10, 0)
+        - column:
+            name: F_OPERATION
+            remarks: 新增或者更新操作
+            type: VARCHAR2(1 BYTE)
+        remarks: 注：建筑群由一个单位的多栋建筑组成，为便于选择和比较而定义
+        tableName: T_BD_GROUP
+- changeSet:
+    id: 1498896388074-6
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_BUILDGROUPID
+            remarks: 建筑群代码
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_BUILDID
+            remarks: 建筑代码
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_OPERATION
+            type: VARCHAR2(1 BYTE)
+        remarks: T_BD_GROUPBUILDRELA 建筑群-建筑对应关系表
+        tableName: T_BD_GROUPBUILDRELA
+- changeSet:
+    id: 1498896388074-7
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_CODE
+            remarks: 类别标示符
+            type: CHAR(1 BYTE)
+        - column:
+            name: F_NAME
+            remarks: 类别名称
+            type: VARCHAR2(255 BYTE)
+        - column:
+            name: F_EXTRA
+            remarks: 附加项
+            type: CLOB
+        remarks: T_BD_BUILDTYPE 建筑功能类别表
+        tableName: T_BD_BUILDTYPE
+- changeSet:
+    id: 1498896388074-8
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_ID
+            remarks: 楼层UUID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_NAME
+            remarks: 楼层名称
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_BUILDID
+            remarks: 建筑uuid
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_CODE
+            type: NUMBER
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_RATED_ELEC
+            remarks: 额定电耗（月kwh），用于计算能耗排名
+            type: NUMBER(10, 1)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_RATED_WATER
+            remarks: 额定水耗（月t），用于计算能耗排名
+            type: NUMBER(10, 1)
+        - column:
+            name: F_AREA
+            type: NUMBER(10, 4)
+        - column:
+            name: F_PEOPLE
+            type: NUMBER(10, 0)
+        remarks: T_BD_FLOOR 建筑层次信息库
+        tableName: T_BD_FLOOR
+- changeSet:
+    id: 1498896388074-9
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_ID
+            remarks: 房间uuid
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_NAME
+            remarks: 房间名称
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_FLOORID
+            remarks: 楼层编码
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ROOMTYPEID
+            remarks: 房间功能类型
+            type: CHAR(1 BYTE)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_PEOPLE
+            remarks: 人数
+            type: NUMBER(10, 0)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_AREA
+            remarks: 面积
+            type: NUMBER(18, 4)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_RATED_ELEC
+            remarks: 额定电耗（月kwh），用于计算能耗排名
+            type: NUMBER(10, 1)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_RATED_WATER
+            remarks: 额定水耗（月t），用于计算能耗排名
+            type: NUMBER(10, 1)
+        remarks: T_BD_ROOM 建筑房间对应教室信息库
+        tableName: T_BD_ROOM
+- changeSet:
+    id: 1498896388074-10
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_CODE
+            remarks: 用途代码
+            type: CHAR(1 BYTE)
+        - column:
+            name: F_NAME
+            remarks: 用途名称
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_DESC
+            remarks: 用途描述
+            type: VARCHAR2(250 BYTE)
+        remarks: T_BD_ROOMTYPE 房间用途表
+        tableName: T_BD_ROOMTYPE
+- changeSet:
+    id: 1498896388074-11
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_ID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_DEVICECODE
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ACTIVE
+            remarks: 电表值
+            type: NUMBER(18, 4)
+        - column:
+            name: F_REACTIVE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_DATATIME
+            type: date
+        - column:
+            name: F_TYPE
+            remarks: 1-15分钟数据标示，5-小时数据标示
+            type: NUMBER(2, 0)
+        - column:
+            name: F_INSERTTIME
+            type: date
+        - column:
+            name: F_P
+            type: NUMBER(18, 4)
+        - column:
+            name: F_PA
+            type: NUMBER(7, 4)
+        - column:
+            name: F_PB
+            type: NUMBER(7, 4)
+        - column:
+            name: F_PC
+            type: NUMBER(7, 4)
+        - column:
+            name: F_NP
+            type: NUMBER(7, 4)
+        - column:
+            name: F_NPA
+            type: NUMBER(7, 4)
+        - column:
+            name: F_NPB
+            type: NUMBER(7, 4)
+        - column:
+            name: F_NPC
+            type: NUMBER(7, 4)
+        - column:
+            name: F_UA
+            type: NUMBER(4, 1)
+        - column:
+            name: F_UB
+            type: NUMBER(4, 1)
+        - column:
+            name: F_UC
+            type: NUMBER(4, 1)
+        - column:
+            name: F_IA
+            type: NUMBER(6, 3)
+        - column:
+            name: F_IB
+            type: NUMBER(6, 3)
+        - column:
+            name: F_IC
+            type: NUMBER(6, 3)
+        - column:
+            defaultValueComputed: '-1'
+            name: F_GLYS
+            type: NUMBER(4, 1)
+        - column:
+            defaultValueComputed: '-1'
+            name: F_GLYSA
+            type: NUMBER(4, 1)
+        - column:
+            defaultValueComputed: '-1'
+            name: F_GLYSB
+            type: NUMBER(4, 1)
+        - column:
+            defaultValueComputed: '-1'
+            name: F_GLYSC
+            type: NUMBER(4, 1)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_TIME_INTERVEL_ACTIVE
+            remarks: 最近时段电量
+            type: NUMBER(18, 4)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_ALREADY_OPERATED
+            remarks: 默认为1（未操作），0-已操作可以删除
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_SEQUENCE
+            remarks: 序列号
+            type: NUMBER
+        tableName: T_BE_15_ENERGY
+- changeSet:
+    id: 1498896388074-12
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_ID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_DEVICECODE
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ACTIVE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_REACTIVE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_DATATIME
+            type: date
+        - column:
+            name: F_TYPE
+            type: NUMBER(2, 0)
+        - column:
+            name: F_INSERTTIME
+            type: date
+        - column:
+            name: F_P
+            type: NUMBER(18, 4)
+        - column:
+            name: F_PA
+            type: NUMBER(7, 4)
+        - column:
+            name: F_PB
+            type: NUMBER(7, 4)
+        - column:
+            name: F_PC
+            type: NUMBER(7, 4)
+        - column:
+            name: F_NP
+            type: NUMBER(7, 4)
+        - column:
+            name: F_NPA
+            type: NUMBER(7, 4)
+        - column:
+            name: F_NPB
+            type: NUMBER(7, 4)
+        - column:
+            name: F_NPC
+            type: NUMBER(7, 4)
+        - column:
+            name: F_UA
+            type: NUMBER(4, 1)
+        - column:
+            name: F_UB
+            type: NUMBER(4, 1)
+        - column:
+            name: F_UC
+            type: NUMBER(4, 1)
+        - column:
+            name: F_IA
+            type: NUMBER(6, 3)
+        - column:
+            name: F_IB
+            type: NUMBER(6, 3)
+        - column:
+            name: F_IC
+            type: NUMBER(6, 3)
+        - column:
+            defaultValueComputed: '-1'
+            name: F_GLYS
+            type: NUMBER(4, 1)
+        - column:
+            defaultValueComputed: '-1'
+            name: F_GLYSA
+            type: NUMBER(4, 1)
+        - column:
+            defaultValueComputed: '-1'
+            name: F_GLYSB
+            type: NUMBER(4, 1)
+        - column:
+            defaultValueComputed: '-1'
+            name: F_GLYSC
+            type: NUMBER(4, 1)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_TIME_INTERVEL_ACTIVE
+            remarks: 最近时段电量
+            type: NUMBER(18, 4)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_ALREADY_OPERATED
+            remarks: 默认为1（未操作），0-已操作可以删除
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_SEQUENCE
+            remarks: 序列号
+            type: NUMBER
+        tableName: T_BE_15_ENERGY_BUFFER
+- changeSet:
+    id: 1498896388074-13
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            defaultValue: sys_guid()
+            name: F_UUID
+            remarks: ID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_BATCHID
+            remarks: 批次编码
+            type: VARCHAR2(50 BYTE)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_NODE_TYPE
+            remarks: 节点类型-0，电表；1，水表；2，其它
+            type: NUMBER(1, 0)
+        - column:
+            defaultValue: '#'
+            name: F_GATEWAYS_UUID
+            remarks: 所属网关
+            type: VARCHAR2(50 BYTE)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_PN
+            remarks: 测量点号
+            type: NUMBER(6, 0)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_NUMBER
+            remarks: 装置序号
+            type: NUMBER(3, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_SPEED_PORT
+            remarks: 通讯速率及端口号
+            type: NUMBER(3, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_PROTOCOL
+            remarks: 通讯协议类型
+            type: NUMBER(3, 0)
+        - column:
+            defaultValueComputed: '000000000001'
+            name: F_ADDRESS
+            remarks: 通讯地址
+            type: CHAR(13 BYTE)
+        - column:
+            defaultValueComputed: '0'
+            name: F_PASSWORD
+            remarks: 通讯密码
+            type: CHAR(13 BYTE)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_RATE_COUNT
+            remarks: 费率个数
+            type: NUMBER(3, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_DATA_FORMAT
+            remarks: 示值整数位及小数点位个数
+            type: NUMBER(3, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_CLASS_NUMBER
+            remarks: 用户大类及小类号
+            type: NUMBER(3, 0)
+        - column:
+
+            name: F_LAST_15
+            remarks: last_15
+            type: date
+        - column:
+
+            name: F_LAST_DAY
+            remarks: last_day
+            type: date
+        - column:
+
+            name: F_LAST_MON
+            remarks: last_mon
+            type: date
+        - column:
+            name: F_CJQ_ADDRESS
+            remarks: 所属采集器通信地址
+            type: CHAR(13 BYTE)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_IS_CHANGED
+            remarks: 变更标识
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_USE
+            remarks: 启用状态
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '2'
+            name: F_ON_OFF
+            remarks: 2无开关，1开关闭合，0开关断开
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueComputed: '-2'
+            name: F_NEWEST_DATA
+            remarks: 最新获取到的表盘数
+            type: NUMBER(18, 4)
+        - column:
+            name: F_NEWEST_DATA_TIME
+            type: date
+        - column:
+            name: F_NEWEST_OPERATE_TIME
+            type: date
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_NEED_OPEN_TRG
+            remarks: 操作标记，用来区分是谁对数据库进行操作的标记，在更新时，只有同时更新了本标志，才会触发触发器！
+            type: NUMBER(1, 0)
+        - column:
+            name: F_NEWEST_VALID_DATA
+            remarks: 最近有效表盘数
+            type: NUMBER(18, 4)
+        - column:
+            name: F_NEWEST_VALID_DATA_TIME
+            remarks: 最近有效数据时间
+            type: date
+        - column:
+            defaultValueComputed: '-2'
+            name: F_HOUR_VALID_DATA
+            remarks: 小时有效数据
+            type: NUMBER(18, 4)
+        - column:
+            name: F_HOUR_VALID_DATA_TIME
+            remarks: 小时有效数据时间
+            type: date
+        - column:
+            defaultValueComputed: '-2'
+            name: F_DAY_VALID_DATA
+            remarks: 日冻结有效数据
+            type: NUMBER(18, 4)
+        - column:
+            name: F_DAY_VALID_DATA_TIME
+            remarks: 有效日冻结时间
+            type: date
+        - column:
+            defaultValueComputed: '-2'
+            name: F_MON_VALID_DATA
+            remarks: 有效月冻结数据
+            type: NUMBER(18, 4)
+        - column:
+            name: F_MON_VALID_DATA_TIME
+            remarks: 有效月冻结时间
+            type: date
+        - column:
+            name: F_REMARKINFO
+            remarks: 备注信息
+            type: VARCHAR2(512 BYTE)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_DATA_COUNT
+            remarks: 数据计器器
+            type: NUMBER(6, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_BAD_DATA_COUNT
+            remarks: 坏值数器器
+            type: NUMBER(6, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_READ_FAIL_COUNT
+            remarks: 读取失败计数器
+            type: NUMBER(6, 0)
+        - column:
+            defaultValueNumeric: !!float '4'
+            name: F_EQUIPMENT_STATUE
+            remarks: 设备状态，值>3时判断为故障，<3判断为正常。
+            type: NUMBER(2, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_CUT
+            remarks: 可断闸
+            type: NUMBER(1, 0)
+        remarks: T_BE_AMMETER 智能电表信息库
+        tableName: T_BE_AMMETER
+- changeSet:
+    id: 1498896388074-14
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_ID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_DEVICECODE
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ACTIVE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_REACTIVE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_DATATIME
+            type: date
+        - column:
+            name: F_TYPE
+            remarks: 1-15分钟数据标示，5-小时数据标示
+            type: NUMBER(2, 0)
+        - column:
+            name: F_INSERTTIME
+            type: date
+        - column:
+            name: F_P
+            type: NUMBER(10, 4)
+        - column:
+            name: F_PA
+            type: NUMBER(7, 4)
+        - column:
+            name: F_PB
+            type: NUMBER(7, 4)
+        - column:
+            name: F_PC
+            type: NUMBER(7, 4)
+        - column:
+            name: F_NP
+            type: NUMBER(7, 4)
+        - column:
+            name: F_NPA
+            type: NUMBER(7, 4)
+        - column:
+            name: F_NPB
+            type: NUMBER(7, 4)
+        - column:
+            name: F_NPC
+            type: NUMBER(7, 4)
+        - column:
+            name: F_UA
+            type: NUMBER(4, 1)
+        - column:
+            name: F_UB
+            type: NUMBER(4, 1)
+        - column:
+            name: F_UC
+            type: NUMBER(4, 1)
+        - column:
+            name: F_IA
+            type: NUMBER(6, 3)
+        - column:
+            name: F_IB
+            type: NUMBER(6, 3)
+        - column:
+            name: F_IC
+            type: NUMBER(6, 3)
+        - column:
+            defaultValueComputed: '-1'
+            name: F_GLYS
+            type: NUMBER(4, 1)
+        - column:
+            defaultValueComputed: '-1'
+            name: F_GLYSA
+            type: NUMBER(4, 1)
+        - column:
+            defaultValueComputed: '-1'
+            name: F_GLYSB
+            type: NUMBER(4, 1)
+        - column:
+            defaultValueComputed: '-1'
+            name: F_GLYSC
+            type: NUMBER(4, 1)
+        - column:
+            name: TEST
+            type: VARCHAR2(20 BYTE)
+        tableName: T_BE_BAD_DATA
+- changeSet:
+    id: 1498896388074-15
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_UUID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_NODES_UUID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ACTIVE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_REACTIVE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_DATA_TIME
+            type: date
+        - column:
+            name: F_TYPE
+            type: NUMBER(2, 0)
+        - column:
+            name: F_IS_NEW
+            type: NUMBER(1, 0)
+        - column:
+            name: F_P
+            type: NUMBER(7, 4)
+        - column:
+            name: F_PA
+            type: NUMBER(7, 4)
+        - column:
+            name: F_PB
+            type: NUMBER(7, 4)
+        - column:
+            name: F_PC
+            type: NUMBER(7, 4)
+        - column:
+            name: F_NP
+            type: NUMBER(7, 4)
+        - column:
+            name: F_NPA
+            type: NUMBER(7, 4)
+        - column:
+            name: F_NPB
+            type: NUMBER(7, 4)
+        - column:
+            name: F_NPC
+            type: NUMBER(7, 4)
+        - column:
+            name: F_UA
+            type: NUMBER(4, 1)
+        - column:
+            name: F_UB
+            type: NUMBER(4, 1)
+        - column:
+            name: F_UC
+            type: NUMBER(4, 1)
+        - column:
+            name: F_IA
+            type: NUMBER(6, 3)
+        - column:
+            name: F_IB
+            type: NUMBER(6, 3)
+        - column:
+            name: F_IC
+            type: NUMBER(6, 3)
+        - column:
+            defaultValueComputed: '-1'
+            name: F_GLYS
+            type: NUMBER(4, 1)
+        - column:
+            defaultValueComputed: '-1'
+            name: F_GLYSA
+            type: NUMBER(4, 1)
+        - column:
+            defaultValueComputed: '-1'
+            name: F_GLYSB
+            type: NUMBER(4, 1)
+        - column:
+            defaultValueComputed: '-1'
+            name: F_GLYSC
+            type: NUMBER(4, 1)
+        - column:
+            name: F_INSERT_TIME
+            type: TIMESTAMP(6)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_SEQUENCE
+            remarks: 自增序列，1-27个9循环，默认值为0
+            type: NUMBER
+        tableName: T_BE_ENERGYHISTORY
+- changeSet:
+    id: 1498896388074-16
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_UUID
+            remarks: 唯一
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_NODES_UUID
+            remarks: 所属的计量节点
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_U
+            remarks: 水压
+            type: NUMBER(6, 2)
+        - column:
+            name: F_CONSUM
+            remarks: 用水量
+            type: NUMBER(18, 4)
+        - column:
+            name: F_FLOW
+            remarks: 流速
+            type: NUMBER(8, 4)
+        - column:
+            name: F_DATA_TIME
+            remarks: 数据时标
+            type: date
+        - column:
+            name: F_TYPE
+            remarks: |-
+              数据类型
+
+              0--实时数据
+
+              1--15分钟冻结
+
+              2--日冻结
+
+              3--月冻结
+            type: NUMBER(2, 0)
+        - column:
+            name: F_IS_NEW
+            remarks: |-
+              更新标识
+
+              0--旧数据
+
+              1--新数据
+
+              数据被拷贝至历史数据库时，置0
+            type: NUMBER(1, 0)
+        - column:
+            name: F_INSERT_TIME
+            type: TIMESTAMP(6)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_SEQUENCE
+            remarks: 自增序列，1-27个9循环，默认值为0
+            type: NUMBER
+        tableName: T_BE_ENERGYHISTORY_W
+- changeSet:
+    id: 1498896388074-17
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            defaultValue: sys_guid()
+            name: F_UUID
+            remarks: ID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_BATCH
+            remarks: 批次编码
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_TYPEID
+            remarks: 设备类型
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_MODEL
+            remarks: 设备型号
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_AMOUNT
+            remarks: 采购数量
+            type: NUMBER(10, 0)
+        - column:
+            name: F_STOCK
+            remarks: 库存量
+            type: NUMBER(10, 0)
+        - column:
+            name: F_SUPPLIER
+            remarks: 供应商
+            type: VARCHAR2(100 BYTE)
+        - column:
+            name: F_PRODUCT
+            remarks: 生产厂商
+            type: VARCHAR2(100 BYTE)
+        - column:
+            name: F_PRICE
+            remarks: 采购单价
+            type: NUMBER(10, 2)
+        - column:
+            name: F_BUYDATE
+            remarks: 采购日期
+            type: date
+        - column:
+            name: F_WARRANTY
+            remarks: 保修期
+            type: NUMBER(4, 0)
+        - column:
+            name: F_CONTACT
+            remarks: 保修联系人
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_PHONE
+            remarks: 联系电话
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_PARAMETERS
+            remarks: 型号参数
+            type: CLOB
+        remarks: T_BE_EQUIPMENTBATCH 设备批次表
+        tableName: T_BE_EQUIPMENTBATCH
+- changeSet:
+    id: 1498896388074-18
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            defaultValue: sys_guid()
+            name: F_UUID
+            remarks: F_UUID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_EQUIPID
+            remarks: 设备编码
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_BATCHID
+            remarks: 批次编码
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_INSTALLTYPE
+            remarks: 安装类型
+            type: NUMBER(1, 0)
+        - column:
+            name: F_BUILDID
+            remarks: 建筑编码
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_FLOORID
+            remarks: 楼层编码
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ROOMID
+            remarks: 房间编码
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_LONGITUDE
+            remarks: 经度
+            type: NUMBER(18, 4)
+        - column:
+            name: F_LATITUDE
+            remarks: 纬度
+            type: NUMBER(18, 4)
+        - column:
+            name: F_REMARK
+            remarks: 备注
+            type: VARCHAR2(100 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_TYPEID
+            remarks: 设备类型
+            type: VARCHAR2(50 BYTE)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_MAINTENANCE
+            remarks: 运维管理
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_CONNECTNUM
+            remarks: 测量数目
+            type: NUMBER(3, 0)
+        - column:
+            name: F_MAPLNG
+            type: NUMBER(18, 4)
+        - column:
+            name: F_MAPLAT
+            type: NUMBER(18, 4)
+        remarks: T_BE_EQUIPMENTINSTALL 设备安装表
+        tableName: T_BE_EQUIPMENTLIST
+- changeSet:
+    id: 1498896388074-19
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            defaultValue: sys_guid()
+            name: F_UUID
+            remarks: F_ID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_TYPE
+            remarks: 类型
+            type: VARCHAR2(20 BYTE)
+        - column:
+            name: F_SUBTYPE
+            remarks: 子类型
+            type: VARCHAR2(20 BYTE)
+        - column:
+            name: F_PARAMETER
+            remarks: 参数名称
+            type: CLOB
+        remarks: T_BE_EQUIPMENTTYPE 设备类型表
+        tableName: T_BE_EQUIPMENTTYPE
+- changeSet:
+    id: 1498896388074-20
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_UUID
+            remarks: ID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_BATCHID
+            remarks: 批次编码
+            type: VARCHAR2(50 BYTE)
+        - column:
+            defaultValue: '1234'
+            name: F_ADDRESS
+            remarks: 终端地址
+            type: VARCHAR2(4 BYTE)
+        - column:
+            defaultValue: '3501'
+            name: F_CODE
+            remarks: 行政区划编码
+            type: VARCHAR2(4 BYTE)
+        - column:
+            defaultValue: 000.000.000.000
+            name: F_IP_MAIN
+            remarks: 主IP
+            type: CHAR(16 BYTE)
+        - column:
+            defaultValueComputed: '12345'
+            name: F_PORT_MAIN
+            remarks: 主端口
+            type: CHAR(5 BYTE)
+        - column:
+            defaultValue: 000.000.000.000
+            name: F_IP_BACKUP
+            remarks: 备用IP
+            type: CHAR(16 BYTE)
+        - column:
+            defaultValueComputed: '12345'
+            name: F_PORT_BACKUP
+            remarks: 备用端口
+            type: CHAR(5 BYTE)
+        - column:
+            defaultValueComputed: '0'
+            name: F_APN
+            remarks: apn
+            type: CHAR(16 BYTE)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_DELAY_1
+            remarks: 终端数传机延时时间RTS,单位20ms
+            type: NUMBER(3, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_DELAY_2
+            remarks: 终端作为启动站允许传输延时时间，单位min(分钟)
+            type: NUMBER(3, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_WAIT_TIME
+            remarks: 终端等待从动站响应的超时时间和重发次数，单位 秒、次
+            type: NUMBER(6, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_FLAG
+            remarks: 需要主站确认的通信服务(CON=1)的标志
+            type: NUMBER(3, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_HEARTBEAT
+            remarks: 心跳周期，单位min
+            type: NUMBER(3, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_IS_FILE_CHANGED
+            remarks: ADDRESS,CODE变更_0未变,1修改,2已更新
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_IS_IP_CHANGED
+            remarks: IP端口信息和APN变更_0未变,1修改,2已更新
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_IS_TRANS_CHANGED
+            remarks: 其它通信参数变更_0未变,1修改,2已更新
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_USE
+            remarks: 1，启用；0，不启用；
+            type: NUMBER(1, 0)
+        - column:
+            name: F_HEARTBEAT_TIME
+            remarks: 网关最后一次心跳时间
+            type: date
+        - column:
+            name: F_LOGIN_TIME
+            remarks: 网关最近登陆时间！
+            type: date
+        - column:
+            name: F_LOST_CONNET_TIME
+            remarks: 网关下线时间！
+            type: date
+        - column:
+            name: F_GATEWAY_VER
+            remarks: 网关版本信息
+            type: CHAR(255 BYTE)
+        - column:
+            name: F_ZD_IP
+            remarks: 网关终端IP
+            type: CHAR(20 BYTE)
+        - column:
+            name: F_ZD_MASK
+            remarks: 网关终端子网掩码
+            type: CHAR(20 BYTE)
+        - column:
+            name: F_ZD_GATEWAY
+            remarks: 网关终端网关ip
+            type: CHAR(20 BYTE)
+        - column:
+            name: F_ZD_MAC
+            remarks: 网关终端MAC地址
+            type: CHAR(20 BYTE)
+        - column:
+            name: F_ZD_LCD_PASSWORD
+            remarks: 液晶屏的操作密码！！！
+            type: CHAR(6 BYTE)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_IS_ZDIP_CHANGED
+            remarks: 网关终端IP、子网掩码、网关IP、MAC、液晶操作密码变更标志——0未变,1修改,2已更新
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_NEED_OPEN_TRG
+            remarks: 操作标记，用来区分是谁对数据库进行操作的标记，在更新时，只有同时更新了本标志，才会触发触发器！
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_SERVER_FLAG
+            remarks: 1、当前登录到主服务器，0、当前登录到备用服务器
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_OPERATE
+            remarks: 操作 1-添加 2-更新 3-删除
+            type: NUMBER(1, 0)
+        remarks: T_BE_GATEWAY 采集器信息库
+        tableName: T_BE_GATEWAY
+- changeSet:
+    id: 1498896388074-21
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: F_UUID
+            remarks: ID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_BATCHID
+            remarks: 批次编码
+            type: VARCHAR2(50 BYTE)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_NODE_TYPE
+            remarks: 节点类型-0，电表；1，水表；2，其它
+            type: NUMBER(1, 0)
+        - column:
+            defaultValue: '#'
+            name: F_GATEWAYS_UUID
+            remarks: 所属网关
+            type: VARCHAR2(50 BYTE)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_PN
+            remarks: 测量点号
+            type: NUMBER(6, 0)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_NUMBER
+            remarks: 装置序号
+            type: NUMBER(3, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_SPEED_PORT
+            remarks: 通讯速率及端口号
+            type: NUMBER(3, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_PROTOCOL
+            remarks: 通讯协议类型
+            type: NUMBER(3, 0)
+        - column:
+            defaultValueComputed: '000000000001'
+            name: F_ADDRESS
+            remarks: 通讯地址
+            type: CHAR(13 BYTE)
+        - column:
+            defaultValueComputed: '0'
+            name: F_PASSWORD
+            remarks: 通讯密码
+            type: CHAR(13 BYTE)
+        - column:
+
+            name: F_LAST_15
+            remarks: last_15
+            type: date
+        - column:
+
+            name: F_LAST_DAY
+            remarks: last_day
+            type: date
+        - column:
+
+            name: F_LAST_MON
+            remarks: last_mon
+            type: date
+        - column:
+            name: F_CJQ_ADDRESS
+            remarks: 所属采集器通信地址
+            type: CHAR(13 BYTE)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_IS_CHANGED
+            remarks: 变更标识
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_USE
+            remarks: 启用状态
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '2'
+            name: F_ON_OFF
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueComputed: '-2'
+            name: F_NEWEST_DATA
+            remarks: 最新一次采集的表盘数
+            type: NUMBER(18, 4)
+        - column:
+            name: F_NEWEST_DATA_TIME
+            type: date
+        - column:
+            name: F_NEWEST_OPERATE_TIME
+            type: date
+        - column:
+            defaultValueNumeric: !!float '96'
+            name: F_CLASS_NUMBER
+            type: NUMBER(3, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_NEED_OPEN_TRG
+            remarks: 操作标记，用来区分是谁对数据库进行操作的标记，在更新时，只有同时更新了本标志，才会触发触发器！
+            type: NUMBER(1, 0)
+        - column:
+            name: F_NEWEST_VALID_DATA
+            remarks: 最近有效表盘数
+            type: NUMBER(18, 4)
+        - column:
+            name: F_NEWEST_VALID_DATA_TIME
+            remarks: 最近有效数据时间
+            type: date
+        - column:
+            defaultValueComputed: '-2'
+            name: F_HOUR_VALID_DATA
+            remarks: 小时有效数据
+            type: NUMBER(18, 4)
+        - column:
+            name: F_HOUR_VALID_DATA_TIME
+            remarks: 小时有效数据时间
+            type: date
+        - column:
+            defaultValueComputed: '-2'
+            name: F_DAY_VALID_DATA
+            remarks: 日冻结有效数据
+            type: NUMBER(18, 4)
+        - column:
+            name: F_DAY_VALID_DATA_TIME
+            remarks: 有效日冻结时间
+            type: date
+        - column:
+            defaultValueComputed: '-2'
+            name: F_MON_VALID_DATA
+            remarks: 有效月冻结数据
+            type: NUMBER(18, 4)
+        - column:
+            name: F_MON_VALID_DATA_TIME
+            remarks: 有效月冻结时间
+            type: date
+        - column:
+            name: F_REMARKINFO
+            remarks: 备注信息
+            type: VARCHAR2(512 BYTE)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_DATA_COUNT
+            remarks: 数据计器器
+            type: NUMBER(6, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_BAD_DATA_COUNT
+            remarks: 坏值数器器
+            type: NUMBER(6, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_READ_FAIL_COUNT
+            remarks: 读取失败计数器
+            type: NUMBER(6, 0)
+        - column:
+            defaultValueNumeric: !!float '4'
+            name: F_EQUIPMENT_STATUE
+            remarks: 设备状态，值>3时判断为故障，=<3判断为正常。
+            type: NUMBER(2, 0)
+        remarks: T_BE_AMMETER 智能电表信息库
+        tableName: T_BE_WATERMETER
+- changeSet:
+    id: 1498896388074-22
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_ID
+            remarks: 树节点编码
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_NAME
+            remarks: 单位名称
+            type: VARCHAR2(100 BYTE)
+        - column:
+            defaultValue: B
+            name: F_TYPECODE
+            remarks: 单位类别
+            type: CHAR(1 BYTE)
+        - column:
+            name: F_MANAGER
+            remarks: 联系人
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_TEL
+            remarks: 联系电话
+            type: VARCHAR2(20 BYTE)
+        - column:
+            name: F_EMAIL
+            remarks: 单位邮箱
+            type: VARCHAR2(64 BYTE)
+        - column:
+            name: F_PID
+            remarks: 上级单位编码
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_REMARK
+            type: VARCHAR2(100 BYTE)
+        - column:
+            name: F_LNG
+            type: NUMBER(18, 4)
+        - column:
+            name: F_LAT
+            type: NUMBER(18, 4)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_PEOPLE
+            remarks: 总人数
+            type: NUMBER(10, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_AREA
+            remarks: 总面积
+            type: NUMBER(10, 4)
+        remarks: T_BO_ORGAN 单位部门表
+        tableName: T_BO_ORGAN
+- changeSet:
+    id: 1498896388074-23
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_CODE
+            remarks: 类别代码
+            type: CHAR(1 BYTE)
+        - column:
+            name: F_NAME
+            remarks: 类别名称
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_DESC
+            remarks: 描述
+            type: VARCHAR2(250 BYTE)
+        remarks: T_BO_ORGANTYPE 单位类型表
+        tableName: T_BO_ORGANTYPE
+- changeSet:
+    id: 1498896388074-24
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_DATATIME
+            type: date
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_PICKUPSTATUS
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_UPLOADSTATUS
+            type: NUMBER(1, 0)
+        - column:
+            name: F_FILENAME
+            type: VARCHAR2(100 BYTE)
+        - column:
+            name: F_FILE
+            type: BLOB
+        - column:
+            name: F_OPERATETIME
+            type: date
+        tableName: T_BP_PICKUPLOAD
+- changeSet:
+    id: 1498896388074-25
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_UUID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_USERID
+            type: VARCHAR2(20 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_OPERATE
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_IP
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_TIME
+            type: date
+        tableName: T_BS_LOG
+- changeSet:
+    id: 1498896388074-26
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_UUID
+            remarks: uuid
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_NAME
+            remarks: 菜单名
+            type: VARCHAR2(20 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_LEVELS
+            remarks: 菜单级别
+            type: VARCHAR2(20 BYTE)
+        - column:
+            name: F_UPMENU
+            remarks: 上级菜单uuid
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_PAGENAME
+            remarks: 页面名称
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_IMAGE
+            remarks: 图片
+            type: VARCHAR2(20 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_CODE
+            remarks: 菜单编码
+            type: VARCHAR2(3 BYTE)
+        tableName: T_BS_MENU
+- changeSet:
+    id: 1498896388074-27
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_ROLEID
+            remarks: 角色uuid
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_MENUID
+            remarks: 菜单uuid
+            type: VARCHAR2(50 BYTE)
+        tableName: T_BS_RIGHT
+- changeSet:
+    id: 1498896388074-28
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_UUID
+            remarks: 角色uuid
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_NAME
+            remarks: 角色名称
+            type: VARCHAR2(20 BYTE)
+        tableName: T_BS_ROLE
+- changeSet:
+    id: 1498896388074-29
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_UUID
+            remarks: 用户uuid
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_NAME
+            remarks: 用户名称
+            type: VARCHAR2(20 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_ROLEID
+            remarks: 用户角色
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_PHONE
+            remarks: 电话
+            type: VARCHAR2(20 BYTE)
+        - column:
+            name: F_EMAIL
+            remarks: 邮箱
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_REMARK
+            remarks: 备注
+            type: VARCHAR2(200 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_PASSWD
+            remarks: 密码
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_ACCOUNT
+            remarks: 账号
+            type: VARCHAR2(20 BYTE)
+        tableName: T_BS_USER
+- changeSet:
+    id: 1498896388074-30
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_CODE
+            remarks: 人员类型代码
+            type: VARCHAR2(10 BYTE)
+        - column:
+            name: F_NAME
+            remarks: 人员类型名称
+            type: VARCHAR2(100 BYTE)
+        remarks: T_BS_USERTYPE 人员类型基础信息表
+        tableName: T_BS_USERTYPE
+- changeSet:
+    id: 1498896388074-31
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_SEQUENCE
+            type: NUMBER
+        tableName: T_CC_CALPRA
+- changeSet:
+    id: 1498896388074-32
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_DATACENTERID
+            type: VARCHAR2(6 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_DISTRICTCODE
+            type: VARCHAR2(6 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_STARTTIME
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            name: F_ENDTIME
+            type: date
+        - column:
+            name: F_TEMPVALUE
+            type: NUMBER(18, 4)
+        tableName: T_DC_CITYTEMPINFO
+- changeSet:
+    id: 1498896388074-33
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_DATACENTERID
+            type: VARCHAR2(6 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_DATACENTERNAME
+            type: VARCHAR2(48 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_DATACENTERTYPE
+            type: NUMBER(1, 0)
+        - column:
+            name: F_DATACENTERMANAGER
+            type: VARCHAR2(48 BYTE)
+        - column:
+            name: F_DATACENTERDESC
+            type: VARCHAR2(800 BYTE)
+        - column:
+            name: F_DATACENTERCONTACT
+            type: VARCHAR2(48 BYTE)
+        - column:
+            name: F_DATACENTERTEL
+            type: VARCHAR2(48 BYTE)
+        tableName: T_DC_DATACENTERBASEINFO
+- changeSet:
+    id: 1498896388074-34
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_ENERGYITEMCODE
+            remarks: 分类分项代码
+            type: VARCHAR2(5 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_ENERGYITEMNAME
+            remarks: 分类分项名称
+            type: VARCHAR2(32 BYTE)
+        - column:
+            name: F_PARENTITEMCODE
+            remarks: 父分类分项代码
+            type: VARCHAR2(5 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_ENERGYITEMTYPE
+            remarks: 能耗类型
+            type: VARCHAR2(1 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_ENERGYITEMUNIT
+            remarks: 分类分项单位
+            type: VARCHAR2(16 BYTE)
+        - column:
+            name: F_ENERGYITEMFML
+            remarks: 换算公式
+            type: NUMBER(18, 4)
+        - column:
+            constraints:
+              nullable: false
+            name: F_ENERGYITEMSTATE
+            remarks: 状态
+            type: NUMBER
+        - column:
+            name: F_PARENTITEMNAME
+            remarks: 上级类别名称
+            type: VARCHAR2(32 BYTE)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_ENERGYITEMLEVEL
+            remarks: 分项级别
+            type: NUMBER(1, 0)
+        remarks: 附：T_DT_EnergyItemDict表的数据（该表数据已有且不会变）
+        tableName: T_DT_ENERGYITEMDICT
+- changeSet:
+    id: 1498896388074-35
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_UUID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_VIOLATION_ID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_NAME
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_USAGE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_GQUSAGE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_LONGITUDE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_LATITUDE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_STATUS
+            type: NUMBER(1, 0)
+        - column:
+            name: F_TIME
+            type: date
+        tableName: T_EC_BAOGUAN_RECORD
+- changeSet:
+    id: 1498896388074-36
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: F_RESULTID
+            remarks: 记录编号
+            type: CHAR(50 BYTE)
+        - column:
+            name: F_BUILDID
+            remarks: 建筑编号
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ENERGYITEMCODE
+            remarks: 分项代码
+            type: CHAR(5 BYTE)
+        - column:
+            name: F_STARTTIME
+            remarks: 开始时间
+            type: date
+        - column:
+            name: F_ENDTIME
+            remarks: 结束时间
+            type: date
+        - column:
+            name: F_VALUE
+            remarks: 能耗值
+            type: NUMBER(18, 4)
+        - column:
+            name: F_EQUVALUE
+            remarks: 煤当量
+            type: NUMBER(18, 4)
+        - column:
+            name: F_BUILDLEVEL
+            remarks: 建筑级别
+            type: NUMBER(1, 0)
+        - column:
+            name: F_ALREADY_OPERATED
+            type: NUMBER(1, 0)
+        remarks: |-
+          注1：本表记录从原始仪表读数经拆分计算之后得到的分类、分项能耗变化量，要求按照15分钟间隔（1刻钟）进行时间配准，要求尽可能分项到最细项
+          注2：考虑到本表记录增长速度非常快，可按照月份进行数据表分区（适用于Oracle 9i、SQL Server 2005及其以上版本）
+        tableName: T_EC_BUILD_15
+- changeSet:
+    id: 1498896388074-37
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: F_RESULTID
+            type: CHAR(50 BYTE)
+        - column:
+            name: F_BUILDID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ENERGYITEMCODE
+            type: CHAR(5 BYTE)
+        - column:
+            name: F_STARTTIME
+            type: date
+        - column:
+            name: F_ENDTIME
+            type: date
+        - column:
+            name: F_VALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_EQUVALUE
+            type: NUMBER(18, 4)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_STATE
+            type: NUMBER(1, 0)
+        - column:
+            name: F_BUILDLEVEL
+            remarks: 建筑级别
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_ALREADY_OPERATED
+            remarks: 默认为1（未操作），0-已操作可以删除
+            type: NUMBER(1, 0)
+        remarks: |-
+          注1：本表记录从原始仪表读数经拆分计算之后得到的分类、分项能耗变化量，要求按照15分钟间隔（1刻钟）进行时间配准，要求尽可能分项到最细项
+          注2：考虑到本表记录增长速度非常快，可按照月份进行数据表分区（适用于Oracle 9i、SQL Server 2005及其以上版本）
+        tableName: T_EC_BUILD_15_BUFFER
+- changeSet:
+    id: 1498896388074-38
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: F_RESULTID
+            type: CHAR(50 BYTE)
+        - column:
+            name: F_BUILDID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ENERGYITEMCODE
+            type: CHAR(5 BYTE)
+        - column:
+            name: F_STARTTIME
+            type: date
+        - column:
+            name: F_ENDTIME
+            type: date
+        - column:
+            name: F_VALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_EQUVALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_BUILDLEVEL
+            remarks: 建筑级别
+            type: NUMBER(1, 0)
+        - column:
+            name: F_ALREADY_OPERATED
+            type: NUMBER(1, 0)
+        remarks: |-
+          注1：本表记录从原始仪表读数经拆分计算之后得到的分类、分项能耗变化量，要求按照15分钟间隔（1刻钟）进行时间配准，要求尽可能分项到最细项
+          注2：考虑到本表记录增长速度非常快，可按照月份进行数据表分区（适用于Oracle 9i、SQL Server 2005及其以上版本）
+        tableName: T_EC_BUILD_DAY
+- changeSet:
+    id: 1498896388074-39
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: F_RESULTID
+            type: CHAR(50 BYTE)
+        - column:
+            name: F_BUILDID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ENERGYITEMCODE
+            type: CHAR(5 BYTE)
+        - column:
+            name: F_STARTTIME
+            type: date
+        - column:
+            name: F_ENDTIME
+            type: date
+        - column:
+            name: F_VALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_EQUVALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_BUILDLEVEL
+            remarks: 建筑级别
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_ALREADY_OPERATED
+            remarks: 默认为1（未操作），0-已操作可以删除
+            type: NUMBER(1, 0)
+        remarks: |-
+          注1：本表记录从原始仪表读数经拆分计算之后得到的分类、分项能耗变化量，要求按照15分钟间隔（1刻钟）进行时间配准，要求尽可能分项到最细项
+          注2：考虑到本表记录增长速度非常快，可按照月份进行数据表分区（适用于Oracle 9i、SQL Server 2005及其以上版本）
+        tableName: T_EC_BUILD_DAY_BUFFER
+- changeSet:
+    id: 1498896388074-40
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: F_RESULTID
+            type: CHAR(50 BYTE)
+        - column:
+            name: F_BUILDID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ENERGYITEMCODE
+            type: CHAR(5 BYTE)
+        - column:
+            name: F_STARTTIME
+            type: date
+        - column:
+            name: F_ENDTIME
+            type: date
+        - column:
+            name: F_VALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_EQUVALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_BUILDLEVEL
+            remarks: 建筑级别
+            type: NUMBER(1, 0)
+        - column:
+            name: F_ALREADY_OPERATED
+            type: NUMBER(1, 0)
+        remarks: |-
+          注1：本表记录从原始仪表读数经拆分计算之后得到的分类、分项能耗变化量，要求按照15分钟间隔（1刻钟）进行时间配准，要求尽可能分项到最细项
+          注2：考虑到本表记录增长速度非常快，可按照月份进行数据表分区（适用于Oracle 9i、SQL Server 2005及其以上版本）
+        tableName: T_EC_BUILD_HOUR
+- changeSet:
+    id: 1498896388074-41
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: F_RESULTID
+            type: CHAR(50 BYTE)
+        - column:
+            name: F_BUILDID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ENERGYITEMCODE
+            type: CHAR(5 BYTE)
+        - column:
+            name: F_STARTTIME
+            type: date
+        - column:
+            name: F_ENDTIME
+            type: date
+        - column:
+            name: F_VALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_EQUVALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_BUILDLEVEL
+            remarks: 建筑级别
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_ALREADY_OPERATED
+            remarks: 默认为1（未操作），0-已操作可以删除
+            type: NUMBER(1, 0)
+        remarks: |-
+          注1：本表记录从原始仪表读数经拆分计算之后得到的分类、分项能耗变化量，要求按照15分钟间隔（1刻钟）进行时间配准，要求尽可能分项到最细项
+          注2：考虑到本表记录增长速度非常快，可按照月份进行数据表分区（适用于Oracle 9i、SQL Server 2005及其以上版本）
+        tableName: T_EC_BUILD_HOUR_BUFFER
+- changeSet:
+    id: 1498896388074-42
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: F_RESULTID
+            type: CHAR(50 BYTE)
+        - column:
+            name: F_BUILDID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ENERGYITEMCODE
+            type: CHAR(5 BYTE)
+        - column:
+            name: F_STARTTIME
+            type: date
+        - column:
+            name: F_ENDTIME
+            type: date
+        - column:
+            name: F_VALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_EQUVALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_BUILDLEVEL
+            remarks: 建筑级别
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_ALREADY_OPERATED
+            remarks: 默认为1（未操作），0-已操作可以删除
+            type: NUMBER(1, 0)
+        remarks: |-
+          注1：本表记录从原始仪表读数经拆分计算之后得到的分类、分项能耗变化量，要求按照15分钟间隔（1刻钟）进行时间配准，要求尽可能分项到最细项
+          注2：考虑到本表记录增长速度非常快，可按照月份进行数据表分区（适用于Oracle 9i、SQL Server 2005及其以上版本）
+        tableName: T_EC_BUILD_MON
+- changeSet:
+    id: 1498896388074-43
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: F_RESULTID
+            type: CHAR(50 BYTE)
+        - column:
+            name: F_BUILDID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ENERGYITEMCODE
+            type: CHAR(5 BYTE)
+        - column:
+            name: F_STARTTIME
+            type: date
+        - column:
+            name: F_ENDTIME
+            type: date
+        - column:
+            name: F_VALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_EQUVALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_BUILDLEVEL
+            remarks: 建筑级别
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_ALREADY_OPERATED
+            remarks: 默认为1（未操作），0-已操作可以删除
+            type: NUMBER(1, 0)
+        remarks: |-
+          注1：本表记录从原始仪表读数经拆分计算之后得到的分类、分项能耗变化量，要求按照15分钟间隔（1刻钟）进行时间配准，要求尽可能分项到最细项
+          注2：考虑到本表记录增长速度非常快，可按照月份进行数据表分区（适用于Oracle 9i、SQL Server 2005及其以上版本）
+        tableName: T_EC_BUILD_YEAR
+- changeSet:
+    id: 1498896388074-44
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_UUID
+            remarks: 唯一标识
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ITEM1
+            remarks: 属性1( 机构的一级机构ID)
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ITEM2
+            remarks: 属性2( 机构的二级机构ID)
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ITEM3
+            remarks: 属性3(机构的三级机构ID)
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_LEVEL
+            remarks: 监控级别
+            type: VARCHAR2(20 BYTE)
+        - column:
+            name: F_ENERGYITEM
+            remarks: 能耗分项代码
+            type: VARCHAR2(5 BYTE)
+        - column:
+            name: F_TIMEUNIT
+            remarks: 时间单位
+            type: VARCHAR2(5 BYTE)
+        - column:
+            name: F_VALUE
+            remarks: 预警值
+            type: NUMBER(18, 4)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_STATE
+            remarks: (0:停用，1:启用)
+            type: NUMBER(1, 0)
+        - column:
+            name: F_TIME
+            type: date
+        remarks: 能耗规则设置表
+        tableName: T_EC_ENERGY_RULE
+- changeSet:
+    id: 1498896388074-45
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_UUID
+            remarks: 记录uuid
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_EQUIPUUID
+            remarks: 设备uuid
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_INSERTTIME
+            remarks: 插入时间
+            type: date
+        - column:
+            name: F_REMARK
+            remarks: 备注
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_TYPE
+            remarks: 0-网关；1-电表；2-水表
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: F_STATUS
+            remarks: 0-正常；1-故障；2-离线；3-底度
+            type: NUMBER(1, 0)
+        tableName: T_EC_EQUIPALERT_RECORD
+- changeSet:
+    id: 1498896388074-46
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: F_AMCIVICISM
+            remarks: 市政电表预警值
+            type: NUMBER(18, 4)
+        - column:
+            name: F_AMSCHOOL
+            remarks: 校级电表预警值
+            type: NUMBER(18, 4)
+        - column:
+            name: F_AMREGION
+            remarks: 区域电表预警值
+            type: NUMBER(18, 4)
+        - column:
+            name: F_AMBUILD
+            remarks: 楼栋电表预警值
+            type: NUMBER(18, 4)
+        - column:
+            name: F_AMFLOOR
+            remarks: 楼层电表预警值
+            type: NUMBER(18, 4)
+        - column:
+            name: F_AMROOM
+            remarks: 房间电表预警值
+            type: NUMBER(18, 4)
+        - column:
+            name: F_WMCIVICISM
+            remarks: 市政水表预警值
+            type: NUMBER(18, 4)
+        - column:
+            name: F_WMSCHOOL
+            remarks: 校级水表预警值
+            type: NUMBER(18, 4)
+        - column:
+            name: F_WMREGION
+            remarks: 区域水表预警值
+            type: NUMBER(18, 4)
+        - column:
+            name: F_WMBUILD
+            remarks: 建筑水表预警值
+            type: NUMBER(18, 4)
+        - column:
+            name: F_WMFLOOR
+            remarks: 楼层水表预警值
+            type: NUMBER(18, 4)
+        - column:
+            name: F_WMROOM
+            remarks: 房间水表预警值
+            type: NUMBER(18, 4)
+        remarks: 设备规则设置表
+        tableName: T_EC_EQUIP_RULE
+- changeSet:
+    id: 1498896388074-47
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_DATATIME
+            remarks: 需要计算的时间点
+            type: date
+        - column:
+            name: F_TIMETYPE
+            remarks: 该表是属于哪类表的时间？间？层？楼栋？区？校级？等
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_ALREADY_OPERATED
+            remarks: 默认为1（未操作），0-已操作可以删除
+            type: NUMBER(1, 0)
+        tableName: T_EC_NEED_OPERATE_DATATIME
+- changeSet:
+    id: 1498896388074-48
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: F_RESULTID
+            remarks: 记录编号
+            type: CHAR(50 BYTE)
+        - column:
+            name: F_ORGANID
+            remarks: 机构uuid
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ENERGYITEMCODE
+            remarks: 分类分项代码
+            type: CHAR(5 BYTE)
+        - column:
+            name: F_STARTTIME
+            remarks: 开始时间
+            type: date
+        - column:
+            name: F_ENDTIME
+            remarks: 结束时间
+            type: date
+        - column:
+            name: F_VALUE
+            remarks: 能耗值
+            type: NUMBER(18, 4)
+        - column:
+            name: F_EQUVALUE
+            remarks: 煤当量值
+            type: NUMBER(18, 4)
+        remarks: |-
+          注1：本表记录从原始仪表读数经拆分计算之后得到的分类、分项能耗变化量，要求按照15分钟间隔（1刻钟）进行时间配准，要求尽可能分项到最细项
+          注2：考虑到本表记录增长速度非常快，可按照月份进行数据表分区（适用于Oracle 9i、SQL Server 2005及其以上版本）
+        tableName: T_EC_ORGAN_15
+- changeSet:
+    id: 1498896388074-49
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: F_RESULTID
+            type: CHAR(50 BYTE)
+        - column:
+            name: F_ORGANID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ENERGYITEMCODE
+            type: CHAR(5 BYTE)
+        - column:
+            name: F_STARTTIME
+            type: date
+        - column:
+            name: F_ENDTIME
+            type: date
+        - column:
+            name: F_VALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_EQUVALUE
+            type: NUMBER(18, 4)
+        remarks: |-
+          注1：本表记录从原始仪表读数经拆分计算之后得到的分类、分项能耗变化量，要求按照15分钟间隔（1刻钟）进行时间配准，要求尽可能分项到最细项
+          注2：考虑到本表记录增长速度非常快，可按照月份进行数据表分区（适用于Oracle 9i、SQL Server 2005及其以上版本）
+        tableName: T_EC_ORGAN_15_BUFFER
+- changeSet:
+    id: 1498896388074-50
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: F_RESULTID
+            type: CHAR(50 BYTE)
+        - column:
+            name: F_ORGANID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ENERGYITEMCODE
+            type: CHAR(5 BYTE)
+        - column:
+            name: F_STARTTIME
+            type: date
+        - column:
+            name: F_ENDTIME
+            type: date
+        - column:
+            name: F_VALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_EQUVALUE
+            type: NUMBER(18, 4)
+        remarks: |-
+          注1：本表记录从原始仪表读数经拆分计算之后得到的分类、分项能耗变化量，要求按照15分钟间隔（1刻钟）进行时间配准，要求尽可能分项到最细项
+          注2：考虑到本表记录增长速度非常快，可按照月份进行数据表分区（适用于Oracle 9i、SQL Server 2005及其以上版本）
+        tableName: T_EC_ORGAN_DAY
+- changeSet:
+    id: 1498896388074-51
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: F_RESULTID
+            type: CHAR(50 BYTE)
+        - column:
+            name: F_ORGANID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ENERGYITEMCODE
+            type: CHAR(5 BYTE)
+        - column:
+            name: F_STARTTIME
+            type: date
+        - column:
+            name: F_ENDTIME
+            type: date
+        - column:
+            name: F_VALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_EQUVALUE
+            type: NUMBER(18, 4)
+        remarks: |-
+          注1：本表记录从原始仪表读数经拆分计算之后得到的分类、分项能耗变化量，要求按照15分钟间隔（1刻钟）进行时间配准，要求尽可能分项到最细项
+          注2：考虑到本表记录增长速度非常快，可按照月份进行数据表分区（适用于Oracle 9i、SQL Server 2005及其以上版本）
+        tableName: T_EC_ORGAN_DAY_BUFFER
+- changeSet:
+    id: 1498896388074-52
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: F_RESULTID
+            type: CHAR(50 BYTE)
+        - column:
+            name: F_ORGANID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ENERGYITEMCODE
+            type: CHAR(5 BYTE)
+        - column:
+            name: F_STARTTIME
+            type: date
+        - column:
+            name: F_ENDTIME
+            type: date
+        - column:
+            name: F_VALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_EQUVALUE
+            type: NUMBER(18, 4)
+        remarks: |-
+          注1：本表记录从原始仪表读数经拆分计算之后得到的分类、分项能耗变化量，要求按照15分钟间隔（1刻钟）进行时间配准，要求尽可能分项到最细项
+          注2：考虑到本表记录增长速度非常快，可按照月份进行数据表分区（适用于Oracle 9i、SQL Server 2005及其以上版本）
+        tableName: T_EC_ORGAN_HOUR
+- changeSet:
+    id: 1498896388074-53
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: F_RESULTID
+            type: CHAR(50 BYTE)
+        - column:
+            name: F_ORGANID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ENERGYITEMCODE
+            type: CHAR(5 BYTE)
+        - column:
+            name: F_STARTTIME
+            type: date
+        - column:
+            name: F_ENDTIME
+            type: date
+        - column:
+            name: F_VALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_EQUVALUE
+            type: NUMBER(18, 4)
+        remarks: |-
+          注1：本表记录从原始仪表读数经拆分计算之后得到的分类、分项能耗变化量，要求按照15分钟间隔（1刻钟）进行时间配准，要求尽可能分项到最细项
+          注2：考虑到本表记录增长速度非常快，可按照月份进行数据表分区（适用于Oracle 9i、SQL Server 2005及其以上版本）
+        tableName: T_EC_ORGAN_HOUR_BUFFER
+- changeSet:
+    id: 1498896388074-54
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: F_RESULTID
+            type: CHAR(50 BYTE)
+        - column:
+            name: F_ORGANID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ENERGYITEMCODE
+            type: CHAR(5 BYTE)
+        - column:
+            name: F_STARTTIME
+            type: date
+        - column:
+            name: F_ENDTIME
+            type: date
+        - column:
+            name: F_VALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_EQUVALUE
+            type: NUMBER(18, 4)
+        remarks: |-
+          注1：本表记录从原始仪表读数经拆分计算之后得到的分类、分项能耗变化量，要求按照15分钟间隔（1刻钟）进行时间配准，要求尽可能分项到最细项
+          注2：考虑到本表记录增长速度非常快，可按照月份进行数据表分区（适用于Oracle 9i、SQL Server 2005及其以上版本）
+        tableName: T_EC_ORGAN_MON
+- changeSet:
+    id: 1498896388074-55
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            name: F_RESULTID
+            type: CHAR(50 BYTE)
+        - column:
+            name: F_ORGANID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ENERGYITEMCODE
+            type: CHAR(5 BYTE)
+        - column:
+            name: F_STARTTIME
+            type: date
+        - column:
+            name: F_ENDTIME
+            type: date
+        - column:
+            name: F_VALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_EQUVALUE
+            type: NUMBER(18, 4)
+        remarks: |-
+          注1：本表记录从原始仪表读数经拆分计算之后得到的分类、分项能耗变化量，要求按照15分钟间隔（1刻钟）进行时间配准，要求尽可能分项到最细项
+          注2：考虑到本表记录增长速度非常快，可按照月份进行数据表分区（适用于Oracle 9i、SQL Server 2005及其以上版本）
+        tableName: T_EC_ORGAN_YEAR
+- changeSet:
+    id: 1498896388074-56
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_ALERTTYPE
+            remarks: 提醒方式(1:邮件,2:短信,3:全部)
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_ISALERT
+            remarks: 是否提醒
+            type: NUMBER(1, 0)
+        - column:
+            name: F_PERCENT
+            type: NUMBER(18, 4)
+        remarks: 预警提示方式表
+        tableName: T_EC_REMINDWAY
+- changeSet:
+    id: 1498896388074-57
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_UUID
+            remarks: 唯一标示
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_USAGE
+            remarks: 实际使用量
+            type: NUMBER(18, 4)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_STATUS
+            remarks: 状态(0：未预警，1：提前预警，2 ：超额预警 )
+            type: NUMBER(1, 0)
+        - column:
+            name: F_ALERTTIME
+            remarks: 预警记录时间
+            type: date
+        - column:
+            name: F_ITEM1
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ITEM2
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ITEM3
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ENERGYITEM
+            type: VARCHAR2(5 BYTE)
+        - column:
+            name: F_TIMEUNIT
+            type: VARCHAR2(5 BYTE)
+        - column:
+            name: F_VALUE
+            type: NUMBER(18, 4)
+        - column:
+            name: F_DATETIME
+            remarks: 预警日期
+            type: date
+        tableName: T_EC_VIOLATION_RECORD
+- changeSet:
+    id: 1498896388074-58
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_ID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_TYPE
+            type: NUMBER(1, 0)
+        - column:
+            name: F_LEVEL
+            type: NUMBER(1, 0)
+        tableName: T_EC_WHITELIST
+- changeSet:
+    id: 1498896388074-59
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_WATERNET
+            remarks: 水网uuid
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_TYPE
+            remarks: 进水或出水
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: F_VALUE
+            remarks: 水量
+            type: NUMBER(18, 4)
+        - column:
+            constraints:
+              nullable: false
+            name: F_TIME
+            remarks: 时间
+            type: date
+        - column:
+            constraints:
+              nullable: false
+            name: F_UUID
+            remarks: 记录uuid
+            type: VARCHAR2(50 BYTE)
+        tableName: T_EE_LEAK
+- changeSet:
+    id: 1498896388074-60
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_UUID
+            remarks: 记录uuid
+            type: NVARCHAR2(50)
+        - column:
+            constraints:
+              nullable: false
+            name: F_WATERNET
+            remarks: 水网uuid
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_TYPE
+            remarks: 1:生产表；2:消费表
+            type: NUMBER(1, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: F_EQUIPID
+            remarks: 水表uuid
+            type: NVARCHAR2(50)
+        tableName: T_EE_NETEQUIP
+- changeSet:
+    id: 1498896388074-61
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_UUID
+            remarks: 水网uuid
+            type: NVARCHAR2(50)
+        - column:
+            constraints:
+              nullable: false
+            name: F_NAME
+            remarks: 水网名称
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_CODE
+            remarks: 水网编号
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_LEVEL
+            remarks: 水网级别
+            type: VARCHAR2(10 BYTE)
+        tableName: T_EE_WATERNET
+- changeSet:
+    id: 1498896388074-62
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            defaultValue: sys_guid()
+            name: F_UUID
+            remarks: F_UUID
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_DEVICECODE
+            remarks: 设备编码
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ENERGYITEMCODE
+            remarks: 分类分项代码
+            type: CHAR(5 BYTE)
+        - column:
+            name: F_BUILDCODE
+            remarks: 所在楼栋uuid
+            type: VARCHAR2(50 BYTE)
+        - column:
+            defaultValueNumeric: !!float '0'
+            name: F_PERCENT
+            remarks: 百分比
+            type: NUMBER(3, 0)
+        - column:
+            name: F_PLUSMINUS
+            remarks: 正负关联
+            type: NUMBER(1, 0)
+        - column:
+            name: F_LEVEL
+            remarks: 建筑级别
+            type: NUMBER(1, 0)
+        - column:
+            name: F_REMARK
+            remarks: 备注
+            type: VARCHAR2(512 BYTE)
+        - column:
+            name: F_BUILDGROUPID
+            remarks: 所在区域uuid
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_FLOORID
+            remarks: 所在层uuid
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_ROOMID
+            remarks: 所在间uuid
+            type: VARCHAR2(50 BYTE)
+        - column:
+            name: F_SUPERIOR_METER_LEVEL
+            remarks: 上级表计级别！0-房间表，1-层表，2-楼栋表，3-区域表，4-校级表，5-电力公司进口计量表
+            type: NUMBER(1, 0)
+        - column:
+            name: F_SUPERIOR_METER
+            remarks: 上级表计UUID，目前没用
+            type: VARCHAR2(50 BYTE)
+        - column:
+            defaultValueNumeric: !!float '2'
+            name: F_DIRECT_CHILD_METER
+            remarks: 0-下级表有不是本建筑体系中的表（包括可能有本系建筑的下级表），需要再计算能耗的时候对其进行扣除，1-仅有本系建筑下级表，2-无下级表
+            type: NUMBER(1, 0)
+        - column:
+            defaultValueNumeric: !!float '1'
+            name: F_DIRECT_SUPERIOR_METER
+            remarks: 1-上级表为本建筑体系内的上级表（不包括本体系内同级建筑），0-反之
+            type: NUMBER(1, 0)
+        remarks: T_RR_DEVICERELATION 计量装置关系表
+        tableName: T_RR_DEVICERELATION
+- changeSet:
+    id: 1498896388074-63
+    author: Jason (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: F_ORGANID
+            remarks: 单位编码
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_BUILDID
+            remarks: 建筑编码
+            type: VARCHAR2(50 BYTE)
+        - column:
+            constraints:
+              nullable: false
+            name: F_PERCENT
+            remarks: 百分比
+            type: NUMBER(3, 0)
+        - column:
+            constraints:
+              nullable: false
+            name: F_UUID
+            remarks: uuid
+            type: VARCHAR2(50 BYTE)
+        remarks: T_RR_ORGANBUILDRELATION 部门建筑关联表
+        tableName: T_RR_ORGANBUILDRELATION
+- changeSet:
+    id: 1498896388074-64
+    author: Jason (generated)
+    changes:
+    - addPrimaryKey:
+        columnNames: F_BUILDID
+        constraintName: PK_T_BD_BUILD
+        tableName: T_BD_BUILD
+
+
