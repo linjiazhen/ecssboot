@@ -51,6 +51,8 @@ ecss.tools=(function(){
                 option.success = success;
             if (error!=null)
                 option.error = error;
+            if (typeof data == 'string')
+                option.contentType='text/plain';
             console.log(option.url);
             console.log(option.data);
             $.ajax(option);

@@ -16,61 +16,61 @@ public class Alert {
     private double usage;
     private int    status;
 
-    public String getFirst() {
-        return first;
-    }
+        public String getFirst() {
+            return first;
+        }
 
-    public void setFirst(String first) {
-        this.first = first;
-    }
+        public void setFirst(String first) {
+            this.first = first;
+        }
 
-    public String getSecond() {
-        return second;
-    }
+        public String getSecond() {
+            return second;
+        }
 
-    public void setSecond(String second) {
-        this.second = second;
-    }
+        public void setSecond(String second) {
+            this.second = second;
+        }
 
-    public String getThird() {
-        return third;
-    }
+        public String getThird() {
+            return third;
+        }
 
-    public void setThird(String third) {
-        this.third = third;
-    }
+        public void setThird(String third) {
+            this.third = third;
+        }
 
-    public String getEnergyitem() {
-        return energyitem;
-    }
+        public String getEnergyitem() {
+            return energyitem;
+        }
 
-    public void setEnergyitem(String energyitem) {
-        this.energyitem = energyitem;
-    }
+        public void setEnergyitem(String energyitem) {
+            this.energyitem = energyitem;
+        }
 
     public double getValue() {
         return value;
     }
 
-    public void setValue(double value) {
-        this.value = value;
-    }
+        public void setValue(double value) {
+            this.value = value;
+        }
 
-    public double getUsage() {
-        return usage;
-    }
+        public double getUsage() {
+            return usage;
+        }
 
-    public void setUsage(double usage) {
-        this.usage = usage;
-    }
+        public void setUsage(double usage) {
+            this.usage = usage;
+        }
 
     public String getUuid() {
         return uuid;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
+        public void setUuid(String uuid) {
+            this.uuid = uuid;
+        }
 
     public String getTimeunit() {
         return timeunit;

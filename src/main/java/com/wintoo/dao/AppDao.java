@@ -1,6 +1,8 @@
 package com.wintoo.dao;
 
-import com.wintoo.model.*;
+import com.wintoo.model.App_EnergyChart;
+import com.wintoo.model.App_EnergySearch;
+import com.wintoo.model.App_timesplitenergy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -21,11 +23,11 @@ import java.util.List;
 
 
 @Repository
-@Transactional
+@Transactional(value = "primaryTransactionManager")
 public class AppDao {
 	@Autowired
     @Qualifier("primaryJdbcTemplate")
-	private JdbcOperations jdbcTemplate;
+    private JdbcOperations jdbcTemplate;
 
 	private DecimalFormat df = new DecimalFormat("#.00");
 	public List<App_timesplitenergy> getTimeSplitEnergy() {
@@ -55,7 +57,7 @@ public class AppDao {
 		final List<App_timesplitenergy> app_timesplitenergys=new ArrayList<App_timesplitenergy>();
 		if(energy_type.equals("01")){//电
 			String sql="select * from (select build_id,t2.F_BUILDNAME as buildname , energy ,t2.F_RATED_ELEC as RATED_ELEC ,ROW_NUMBER() OVER(ORDER BY (energy-t2.F_RATED_ELEC)/(t2.F_RATED_ELEC+1) "+sort_method+") as rownumber "+
-									   "from T_BD_BUILD t2, (select F_BUILDID as build_id,sum(F_VALUE) as energy from t_ec_build_mon where f_buildlevel=2 and to_char(f_starttime,'yyyy-mm')=to_char(sysdate,'yyyy-mm') and substr(F_ENERGYITEMCODE,1,2)='01' group by F_BUILDID) "+
+									   "from t_bd_buildbaseinfo t2, (select F_BUILDID as build_id,sum(F_VALUE) as energy from t_ec_build_mon where f_buildlevel=2 and to_char(f_starttime,'yyyy-mm')=to_char(sysdate,'yyyy-mm') and substr(F_ENERGYITEMCODE,1,2)='01' group by F_BUILDID) "+
 									   "where build_id=t2.F_BUILDID) "+
 								  "where rownumber<4 order by rownumber asc";
 			jdbcTemplate.query(sql, new RowCallbackHandler(){
@@ -73,7 +75,7 @@ public class AppDao {
 		}
 		else{//电
 			String sql="select * from (select build_id,t2.F_BUILDNAME as buildname , energy ,t2.F_RATED_WATER as RATED_WATER ,ROW_NUMBER() OVER(ORDER BY (energy-t2.F_RATED_WATER)/(t2.F_RATED_WATER+1) "+sort_method+") as rownumber "+
-					   				  "from T_BD_BUILD t2, (select F_BUILDID as build_id,sum(F_VALUE) as energy from t_ec_build_mon where f_buildlevel=2 and to_char(f_starttime,'yyyy-mm')=to_char(sysdate,'yyyy-mm') and substr(F_ENERGYITEMCODE,1,2)='02' group by F_BUILDID) "+
+					   				  "from t_bd_buildbaseinfo t2, (select F_BUILDID as build_id,sum(F_VALUE) as energy from t_ec_build_mon where f_buildlevel=2 and to_char(f_starttime,'yyyy-mm')=to_char(sysdate,'yyyy-mm') and substr(F_ENERGYITEMCODE,1,2)='02' group by F_BUILDID) "+
 					   				  "where build_id=t2.F_BUILDID) "+
 					   	"where rownumber<4 order by rownumber asc";
 			jdbcTemplate.query(sql, new RowCallbackHandler(){
@@ -160,13 +162,13 @@ public class AppDao {
 		}
 		else if(build_level.equals("2")){
 			sql="select * from (select build_id,t2.F_BUILDNAME as buildname , energy ,t2."+rated_type+" as RATED ,ROW_NUMBER() OVER(ORDER BY (energy-t2.F_RATED_ELEC)/(t2.F_RATED_ELEC+1) desc) as rownumber "+
-								"from T_BD_BUILD t2, (select F_BUILDID as build_id,sum(F_VALUE) as energy from "+tablename+" where f_buildlevel=2 and f_starttime=to_date("+build_time.replace("-", "")+",'"+timeformat+"') and substr(F_ENERGYITEMCODE,1,2)='"+build_energy_type+"' group by F_BUILDID) "+
+								"from T_BD_BUILDBASEINFO t2, (select F_BUILDID as build_id,sum(F_VALUE) as energy from "+tablename+" where f_buildlevel=2 and f_starttime=to_date("+build_time.replace("-", "")+",'"+timeformat+"') and substr(F_ENERGYITEMCODE,1,2)='"+build_energy_type+"' group by F_BUILDID) "+
 								"where build_id=t2.F_BUILDID) "+
 					"order by rownumber asc";
 		}
 		else{
 			sql="select * from (select build_id,t2.F_BUILDGROUPNAME as buildname , energy ,t2."+rated_type+" as RATED ,ROW_NUMBER() OVER(ORDER BY (energy-t2.F_RATED_ELEC)/(t2.F_RATED_ELEC+1) desc) as rownumber "+
-								"from T_BD_GROUP t2, (select F_BUILDID as build_id,sum(F_VALUE) as energy from "+tablename+" where f_buildlevel=3 and f_starttime=to_date("+build_time.replace("-", "")+",'"+timeformat+"') and substr(F_ENERGYITEMCODE,1,2)='"+build_energy_type+"' group by F_BUILDID) "+
+								"from T_BD_BUILDGROUPBASEINFO t2, (select F_BUILDID as build_id,sum(F_VALUE) as energy from "+tablename+" where f_buildlevel=3 and f_starttime=to_date("+build_time.replace("-", "")+",'"+timeformat+"') and substr(F_ENERGYITEMCODE,1,2)='"+build_energy_type+"' group by F_BUILDID) "+
 								"where build_id=t2.F_BUILDGROUPID) "+
 					"order by rownumber asc";
 		}
@@ -857,11 +859,11 @@ public class AppDao {
             }
 			else
             if(app_energySearch.getModellevel().equals("group")){
-                sql="select f_people as people, f_area as area from T_BD_GROUP  where f_buildgroupid=? ";
+                sql="select f_people as people, f_area as area from t_bd_buildgroupbaseinfo  where f_buildgroupid=? ";
             }
             else
             if (app_energySearch.getModellevel().equals("build")) {
-                sql="select f_people as people, f_totalarea as area from T_BD_BUILD where f_buildid=?";
+                sql="select f_people as people, f_totalarea as area from t_bd_buildbaseinfo where f_buildid=?";
             }
             else
             if (app_energySearch.getModellevel().equals("floor")) {
@@ -918,7 +920,7 @@ public class AppDao {
         }
     }
     public App_EnergyChart App_GetFuncEnergy(App_EnergySearch app_energySearch){
-        String sql="select f_name,sum(F_VALUE) as value from T_BD_BUILDTYPE c,T_BD_BUILD a,T_EC_BUILD_YEAR b where a.F_BUILDID=b.F_BUILDID and a.F_BUILDFUNC=c.F_CODE and substr(b.F_ENERGYITEMCODE,1,2) = '01' group by F_NAME ORDER BY value";
+        String sql="select f_name,sum(F_VALUE) as value from T_BD_BUILDTYPE c,T_BD_BUILDBASEINFO a,T_EC_BUILD_YEAR b where a.F_BUILDID=b.F_BUILDID and a.F_BUILDFUNC=c.F_CODE and substr(b.F_ENERGYITEMCODE,1,2) = '01' group by F_NAME ORDER BY value";
         final List<String> label=new ArrayList<String>();
         final List<Double> energy=new ArrayList<Double>();
         jdbcTemplate.query(sql, new RowCallbackHandler() {

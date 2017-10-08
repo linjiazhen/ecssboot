@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,11 +21,12 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-@Transactional
+@Transactional(value = "primaryTransactionManager")
 public class EnergyDao {
 	@Autowired
 	@Qualifier("primaryJdbcTemplate")
 	private JdbcOperations jdbcTemplate;
+
 	private SimpleDateFormat sdf=new SimpleDateFormat("yyyy/MM/dd");
 	private SimpleDateFormat sdf1=new SimpleDateFormat("yyyy-MM");
 	private DecimalFormat df = new DecimalFormat("#.00");
@@ -80,70 +82,54 @@ public class EnergyDao {
 	public EnergyChart getEnergy(EnergySearch energySearch){
 		Energy energy= new Energy();
 		String sql=null;
-        Object[] args=null;
 		if(energySearch.getModel().equals("build")){
 			if(energySearch.getBasetime().equals("minutes")){
-				sql="(select F_VALUE,to_char(F_STARTTIME,'hh24:mi') as time FROM T_EC_BUILD_15 WHERE F_BUILDID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd')) "+
-                        "UNION (select F_VALUE,to_char(F_STARTTIME,'hh24:mi') as time FROM T_EC_BUILD_15_BUFFER WHERE F_BUILDID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd')) ORDER BY time";
-                args=new Object[]{energySearch.getModelid(),energySearch.getEnergytypeid(),energySearch.getStartdate(),energySearch.getEnddate(),energySearch.getModelid(),energySearch.getEnergytypeid(),energySearch.getStartdate(),energySearch.getEnddate()};
-            }
+				sql="select F_VALUE,to_char(F_STARTTIME,'hh24:mi') as time FROM T_EC_BUILD_15 WHERE F_BUILDID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') ORDER BY time";
+			}
 			else
 				if(energySearch.getBasetime().equals("hour")){
-					sql="(select F_VALUE,to_char(F_STARTTIME,'hh24:mi') as hour FROM T_EC_BUILD_HOUR WHERE F_BUILDID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd')) "+
-                            "UNION (select F_VALUE,to_char(F_STARTTIME,'hh24:mi') as hour FROM T_EC_BUILD_HOUR_BUFFER WHERE F_BUILDID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd')) ORDER BY hour ";
-                    args=new Object[]{energySearch.getModelid(),energySearch.getEnergytypeid(),energySearch.getStartdate(),energySearch.getEnddate(),energySearch.getModelid(),energySearch.getEnergytypeid(),energySearch.getStartdate(),energySearch.getEnddate()};
-                }
+					sql="select F_VALUE,to_char(F_STARTTIME,'hh24:mi') as hour FROM T_EC_BUILD_HOUR WHERE F_BUILDID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') ORDER BY hour";
+				}
 				else
 					if(energySearch.getBasetime().equals("day")){
-						sql="(select F_VALUE,to_char(F_STARTTIME,'yyyy/mm/dd') as day FROM T_EC_BUILD_DAY WHERE F_BUILDID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd')) "+
-                                "UNION (select F_VALUE,to_char(F_STARTTIME,'yyyy/mm/dd') as day FROM T_EC_BUILD_DAY_BUFFER WHERE F_BUILDID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd')) ORDER BY day ";
-                        args=new Object[]{energySearch.getModelid(),energySearch.getEnergytypeid(),energySearch.getStartdate(),energySearch.getEnddate(),energySearch.getModelid(),energySearch.getEnergytypeid(),energySearch.getStartdate(),energySearch.getEnddate()};
-                    }
+						sql="select F_VALUE,to_char(F_STARTTIME,'yyyy/mm/dd') as day FROM T_EC_BUILD_DAY WHERE F_BUILDID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') ORDER BY day";
+					}
 					else
 						if(energySearch.getBasetime().equals("month")){
 							sql="select F_VALUE,to_char(F_STARTTIME,'yyyy/mm') as month FROM T_EC_BUILD_MON WHERE F_BUILDID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') order by month";
-                            args=new Object[]{energySearch.getModelid(),energySearch.getEnergytypeid(),energySearch.getStartdate(),energySearch.getEnddate()};
-                        }
+						}
 						else
 							if(energySearch.getBasetime().equals("year")){
 								sql="select F_VALUE,to_char(F_STARTTIME,'yyyy') as year FROM T_EC_BUILD_YEAR WHERE F_BUILDID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') order by year";
-                                args=new Object[]{energySearch.getModelid(),energySearch.getEnergytypeid(),energySearch.getStartdate(),energySearch.getEnddate()};
-                            }
+							}
 		}
 		else{
 			if(energySearch.getBasetime().equals("minutes")){
-				sql="(select F_VALUE,to_char(F_STARTTIME,'hh24:mi') as time FROM T_EC_ORGAN_15 WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd')) " +
-                        "UNION (select F_VALUE,to_char(F_STARTTIME,'hh24:mi') as time FROM T_EC_ORGAN_15_BUFFER WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd')) ORDER BY time";
-                args=new Object[]{energySearch.getModelid(),energySearch.getEnergytypeid(),energySearch.getStartdate(),energySearch.getEnddate(),energySearch.getModelid(),energySearch.getEnergytypeid(),energySearch.getStartdate(),energySearch.getEnddate()};
-            }
+				sql="select F_VALUE,to_char(F_STARTTIME,'hh24:mi') as time FROM T_EC_ORGAN_15 WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') ORDER BY time";
+			}
 			else
 				if(energySearch.getBasetime().equals("hour")){
-					sql="(select F_VALUE,to_char(F_STARTTIME,'hh24:mi') as hour FROM T_EC_ORGAN_HOUR WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd')) " +
-                            "UNION (select F_VALUE,to_char(F_STARTTIME,'hh24:mi') as hour FROM T_EC_ORGAN_HOUR_BUFFER WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd')) ORDER BY hour";
-                    args=new Object[]{energySearch.getModelid(),energySearch.getEnergytypeid(),energySearch.getStartdate(),energySearch.getEnddate(),energySearch.getModelid(),energySearch.getEnergytypeid(),energySearch.getStartdate(),energySearch.getEnddate()};
-                }
+					sql="select F_VALUE,to_char(F_STARTTIME,'hh24:mi') as hour FROM T_EC_ORGAN_15 WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') ORDER BY hour";
+				}
 				else
 					if(energySearch.getBasetime().equals("day")){
-						sql="(select F_VALUE,to_char(F_STARTTIME,'yyyy/mm/dd') as day FROM T_EC_ORGAN_DAY WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd'))" +
-                                "UNION (select F_VALUE,to_char(F_STARTTIME,'yyyy/mm/dd') as day FROM T_EC_ORGAN_DAY_BUFFER WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd')) ORDER BY day";
-                        args=new Object[]{energySearch.getModelid(),energySearch.getEnergytypeid(),energySearch.getStartdate(),energySearch.getEnddate(),energySearch.getModelid(),energySearch.getEnergytypeid(),energySearch.getStartdate(),energySearch.getEnddate()};
-                    }
+						sql="select F_VALUE,to_char(F_STARTTIME,'yyyy/mm/dd') as day FROM T_EC_ORGAN_15 WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') ORDER BY day";
+					}
 					else
 						if(energySearch.getBasetime().equals("month")){
-							sql="select F_VALUE,to_char(F_STARTTIME,'yyyy/mm') as month FROM T_EC_ORGAN_MON WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') order by month";
-                            args=new Object[]{energySearch.getModelid(),energySearch.getEnergytypeid(),energySearch.getStartdate(),energySearch.getEnddate()};
-                        }
+							sql="select F_VALUE,to_char(F_STARTTIME,'yyyy/mm') as month FROM T_EC_ORGAN_15 WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') order by month";
+						}
 						else
 							if(energySearch.getBasetime().equals("year")){
-								sql="select F_VALUE,to_char(F_STARTTIME,'yyyy') as year FROM T_EC_ORGAN_YEAR WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<=to_date(?,'yyyy/mm/dd') order by year";
-                                args=new Object[]{energySearch.getModelid(),energySearch.getEnergytypeid(),energySearch.getStartdate(),energySearch.getEnddate()};
-                            }
+								sql="select F_VALUE,to_char(F_STARTTIME,'yyyy') as year FROM T_EC_ORGAN_15 WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<=to_date(?,'yyyy/mm/dd') order by year";
+							}
 		}
-		//energy.setName(energySearch.getEnergytype());
+		energy.setName(energySearch.getEnergytype());
 		//final double pora=getPeopleArea(energySearch);
         final double pora=0;
 		final List<Double> data=new ArrayList<Double>();
 		final List<String> categories=new ArrayList<String>();
+		Object[] args=new Object[]{energySearch.getModelid(),energySearch.getEnergytypeid(),energySearch.getStartdate(),energySearch.getEnddate()};
 		jdbcTemplate.query(sql,args, new RowCallbackHandler() {
 			@Override
 			public void processRow(ResultSet rs) throws SQLException {
@@ -153,7 +139,7 @@ public class EnergyDao {
 		});
 		energy.setData(data);
 		Energy cEnergy=new Energy();
-		//cEnergy.setName(energySearch.getEnergytype());
+		cEnergy.setName(energySearch.getEnergytype());
 		cEnergy.setData(getChainData(data));
 //		final List<Double> lastdata=new ArrayList<Double>();
 //		Calendar start = Calendar.getInstance();
@@ -216,11 +202,11 @@ public class EnergyDao {
                     sql="select sum(f_num) as people, sum(f_area) as area from t_bd_room ";
                 }
 				if(energySearch.getModellevel().equals("group")){
-					sql="select sum(f_num) as people, sum(f_area) as area from T_BD_GROUP a,T_BD_GROUPBUILDRELA b,T_BD_BUILD c,t_bd_floor d,t_bd_room e where a.f_buildgroupid=? and a.f_buildgroupid=b.f_buildgroupid and b.f_buildid=c.f_buildid and c.f_buildid=d.f_buildid and d.f_id=e.f_floorid";
+					sql="select sum(f_num) as people, sum(f_area) as area from t_bd_buildgroupbaseinfo a,t_bd_buildgrouprelainfo b,t_bd_buildbaseinfo c,t_bd_floor d,t_bd_room e where a.f_buildgroupid=? and a.f_buildgroupid=b.f_buildgroupid and b.f_buildid=c.f_buildid and c.f_buildid=d.f_buildid and d.f_id=e.f_floorid";
 				}
 				else 
 					if (energySearch.getModellevel().equals("build")) {
-						sql="select sum(f_num) as people, sum(f_area) as area from T_BD_BUILD a,t_bd_floor b,t_bd_room c where a.f_buildid=?  and a.f_buildid=b.f_buildid and b.f_id=c.f_floorid";
+						sql="select sum(f_num) as people, sum(f_area) as area from t_bd_buildbaseinfo a,t_bd_floor b,t_bd_room c where a.f_buildid=?  and a.f_buildid=b.f_buildid and b.f_id=c.f_floorid";
 					}
 					else 
 						if (energySearch.getModellevel().equals("floor")) {
@@ -515,8 +501,8 @@ public class EnergyDao {
     public double getWaterMonthEnergy(String ids){
         String[] id=ids.split(",");
 
-        String sql="select sum(F_TIME_INTERVEL_ACTIVE) FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=?  AND F_DATATIME>=to_date(?,'yyyy-mm')";
-        Object[] args={id[0],id[1]};
+        String sql="select sum(F_TIME_INTERVEL_ACTIVE) FROM T_15_ENERGY_BUFFER WHERE F_DEVICECODE=?  AND to_char(F_DATATIME,'yyyy-mm')=?";
+        Object[] args={id[0],sdf1.format(new Date())};
         double sum=0;
         try {
             sum=jdbcTemplate.queryForObject(sql, args, Double.class);
@@ -525,9 +511,9 @@ public class EnergyDao {
         return sum;
     }
     private int getEquipNum(String uuid,int type){
-        String sql="select count(*) from T_EE_NETEQUIP WHERE F_WATERNET=? AND F_TYPE=?";
+        String sql="select count(*) num from T_EE_NETEQUIP WHERE F_WATERNET=? AND F_TYPE=?";
         Object[] args={uuid,type};
-        return (int)jdbcTemplate.queryForMap(sql,args).get("num");
+        return ((BigDecimal)jdbcTemplate.queryForMap(sql,args).get("num")).intValue();
     }
 /*    private double getleak(String uuid){
 
@@ -573,7 +559,7 @@ public class EnergyDao {
     }
     public List<EquipList> getProduce(String id){
         String sql="select NVL(NVL(gateway1,gateway2),'未配置') as gateway, g.F_UUID,a.F_EQUIPID,a.F_BATCHID,a.F_TYPEID,f.F_BATCH,b.F_TYPE,b.F_SUBTYPE,f.F_MODEL,a.F_INSTALLTYPE,t.F_BUILDGROUPNAME,c.F_BUILDNAME,d.F_NAME AS D_F_NAME,e.F_NAME AS E_F_NAME,a.F_LONGITUDE,a.F_LATITUDE,a.F_REMARK "+
-                "from T_BD_GROUPBUILDRELA h,T_BD_GROUP t,T_BE_EQUIPMENTLIST a,T_BE_EQUIPMENTTYPE b,T_BD_BUILD c,T_BD_FLOOR d,T_BD_ROOM e ,T_BE_EQUIPMENTBATCH f,T_EE_NETEQUIP g,"+
+                "from T_BD_BUILDGROUPRELAINFO h,T_BD_BUILDGROUPBASEINFO t,T_BE_EQUIPMENTLIST a,T_BE_EQUIPMENTTYPE b,T_BD_BUILDBASEINFO c,T_BD_FLOOR d,T_BD_ROOM e ,T_BE_EQUIPMENTBATCH f,T_EE_NETEQUIP g,"+
                 "(select t2.f_address||'-'||t1.f_use||'-'||lpad(t1.f_pn,3,'0') as gateway1,t3.f_uuid as uuid1 from t_be_ammeter t1,t_be_gateway t2,T_BE_EQUIPMENTLIST t3 where t3.f_uuid=t1.f_uuid and t1.f_gateways_uuid=t2.f_uuid),"+
                 "(select t2.f_address||'-'||t1.f_use||'-'||lpad(t1.f_pn,3,'0') as gateway2,t3.f_uuid as uuid2 from t_be_watermeter t1,t_be_gateway t2,T_BE_EQUIPMENTLIST t3 where t3.f_uuid=t1.f_uuid and t1.f_gateways_uuid=t2.f_uuid) "+
                 "where a.f_uuid=uuid1(+) and a.f_uuid=uuid2(+) and a.F_BATCHID=f.F_UUID AND a.F_TYPEID=b.F_UUID AND a.F_BUILDID=c.F_BUILDID(+) AND a.F_FLOORID=d.F_ID(+) AND a.F_ROOMID=e.F_ID(+) AND h.F_BUILDID(+)=a.F_BUILDID AND t.F_BUILDGROUPID(+)=h.F_BUILDGROUPID AND g.F_EQUIPID=a.F_UUID AND g.F_WATERNET=? AND g.F_TYPE=1";
@@ -632,7 +618,7 @@ public class EnergyDao {
     }
     public List<EquipList> getConsume(String id){
         String sql="select NVL(NVL(gateway1,gateway2),'未配置') as gateway, g.F_UUID,a.F_EQUIPID,a.F_BATCHID,a.F_TYPEID,f.F_BATCH,b.F_TYPE,b.F_SUBTYPE,f.F_MODEL,a.F_INSTALLTYPE,t.F_BUILDGROUPNAME,c.F_BUILDNAME,d.F_NAME AS D_F_NAME,e.F_NAME AS E_F_NAME,a.F_LONGITUDE,a.F_LATITUDE,a.F_REMARK "+
-                "from T_BD_GROUPBUILDRELA h,T_BD_GROUP t,T_BE_EQUIPMENTLIST a,T_BE_EQUIPMENTTYPE b,T_BD_BUILD c,T_BD_FLOOR d,T_BD_ROOM e ,T_BE_EQUIPMENTBATCH f,T_EE_NETEQUIP g,"+
+                "from T_BD_BUILDGROUPRELAINFO h,T_BD_BUILDGROUPBASEINFO t,T_BE_EQUIPMENTLIST a,T_BE_EQUIPMENTTYPE b,T_BD_BUILDBASEINFO c,T_BD_FLOOR d,T_BD_ROOM e ,T_BE_EQUIPMENTBATCH f,T_EE_NETEQUIP g,"+
                 "(select t2.f_address||'-'||t1.f_use||'-'||lpad(t1.f_pn,3,'0') as gateway1,t3.f_uuid as uuid1 from t_be_ammeter t1,t_be_gateway t2,T_BE_EQUIPMENTLIST t3 where t3.f_uuid=t1.f_uuid and t1.f_gateways_uuid=t2.f_uuid),"+
                 "(select t2.f_address||'-'||t1.f_use||'-'||lpad(t1.f_pn,3,'0') as gateway2,t3.f_uuid as uuid2 from t_be_watermeter t1,t_be_gateway t2,T_BE_EQUIPMENTLIST t3 where t3.f_uuid=t1.f_uuid and t1.f_gateways_uuid=t2.f_uuid) "+
                 "where a.f_uuid=uuid1(+) and a.f_uuid=uuid2(+) and a.F_BATCHID=f.F_UUID AND a.F_TYPEID=b.F_UUID AND a.F_BUILDID=c.F_BUILDID(+) AND a.F_FLOORID=d.F_ID(+) AND a.F_ROOMID=e.F_ID(+) AND h.F_BUILDID(+)=a.F_BUILDID AND t.F_BUILDGROUPID(+)=h.F_BUILDGROUPID AND g.F_EQUIPID=a.F_UUID AND g.F_WATERNET=? AND g.F_TYPE=2";
@@ -817,11 +803,11 @@ public LeakChart getLeak(LeakSearch leakSearch){
 }
     public List<Options> getGatewaynames(){
         String sql="select DISTINCT b.F_UUID,b.F_ADDRESS from T_BE_WATERMETER a,T_BE_GATEWAY b WHERE a.F_GATEWAYS_UUID=b.F_UUID ";
-        final List<Options> Options=new ArrayList<Options>();
+        final List<Options> Options=new ArrayList<com.wintoo.model.Options>();
         jdbcTemplate.query(sql, new RowCallbackHandler(){
             @Override
             public void processRow(ResultSet rs)throws SQLException{
-                Options option=new Options();
+                com.wintoo.model.Options option=new Options();
                 option.setId(rs.getString("F_UUID"));
                 option.setName(rs.getString("F_ADDRESS"));
                 Options.add(option);
@@ -832,11 +818,11 @@ public LeakChart getLeak(LeakSearch leakSearch){
     public List<Options> getEquipnames(String id){
         String sql="select DISTINCT b.F_UUID,b.F_EQUIPID,b.f_remark from T_BE_WATERMETER a,T_BE_EQUIPMENTLIST b WHERE a.F_UUID=b.F_UUID AND a.F_GATEWAYS_UUID=? order by b.F_equipid";
         String[] args={id};
-        final List<Options> Options=new ArrayList<Options>();
+        final List<Options> Options=new ArrayList<com.wintoo.model.Options>();
         jdbcTemplate.query(sql, args, new RowCallbackHandler(){
             @Override
             public void processRow(ResultSet rs)throws SQLException{
-                Options option=new Options();
+                com.wintoo.model.Options option=new Options();
                 option.setId(rs.getString("F_UUID"));
                 option.setName(rs.getString("F_EQUIPID") +"-"+rs.getString("F_REMARK"));
                 Options.add(option);
@@ -846,11 +832,11 @@ public LeakChart getLeak(LeakSearch leakSearch){
     }
     public List<Options> getNetNames(){
         String sql="select f_uuid,f_name from T_EE_WATERNET order by f_code";
-        final List<Options> Options=new ArrayList<Options>();
+        final List<Options> Options=new ArrayList<com.wintoo.model.Options>();
         jdbcTemplate.query(sql,  new RowCallbackHandler(){
             @Override
             public void processRow(ResultSet rs)throws SQLException{
-                Options option=new Options();
+                com.wintoo.model.Options option=new Options();
                 option.setId(rs.getString("F_UUID"));
                 option.setName(rs.getString("F_NAME") );
                 Options.add(option);

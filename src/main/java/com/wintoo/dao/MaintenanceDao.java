@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,7 +34,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 @Repository
-@Transactional
+@Transactional(value = "primaryTransactionManager")
 public class MaintenanceDao {
     @Autowired
     @Qualifier("primaryJdbcTemplate")
@@ -47,7 +48,7 @@ public class MaintenanceDao {
         String sql="select a.*,(sysdate - F_HEARTBEAT_TIME) AS TIME_INTERVAL,to_char(F_HEARTBEAT_TIME,'yyyy-MM-dd HH24:mi:SS') AS NEWEST_HEARTBEAT_TIME,"+
                 "to_char(F_LOGIN_TIME,'yyyy-MM-dd HH24:mi:SS') AS LOGIN_TIME,to_char(F_LOST_CONNET_TIME,'yyyy-MM-dd HH24:mi:SS') AS LOST_CONNET_TIME,"+
                 "b.F_EQUIPID AS F_EQUIP,c.F_BATCH,c.F_MODEL,d.F_TYPE,d.F_SUBTYPE,b.F_INSTALLTYPE,t.F_BUILDGROUPNAME,e.F_BUILDNAME,f.F_NAME AS FLOOR,g.F_NAME AS ROOM,b.F_LONGITUDE,b.F_LATITUDE,b.F_REMARK "+
-                "from T_BE_GATEWAY a,T_BE_EQUIPMENTLIST b,T_BE_EQUIPMENTBATCH c,T_BE_EQUIPMENTTYPE d,T_BD_GROUPBUILDRELA h,T_BD_GROUP t,T_BD_BUILD e,T_BD_FLOOR f,T_BD_ROOM g " +
+                "from T_BE_GATEWAY a,T_BE_EQUIPMENTLIST b,T_BE_EQUIPMENTBATCH c,T_BE_EQUIPMENTTYPE d,T_BD_BUILDGROUPRELAINFO h,T_BD_BUILDGROUPBASEINFO t,T_BD_BUILDBASEINFO e,T_BD_FLOOR f,T_BD_ROOM g " +
                 "where a.F_UUID=b.F_UUID AND a.F_BATCHID=c.F_UUID AND b.F_TYPEID=d.F_UUID AND b.F_BUILDID=e.F_BUILDID(+) AND b.F_FLOORID=f.F_ID(+) AND b.F_ROOMID=g.F_ID(+) AND h.F_BUILDID(+)=b.F_BUILDID AND t.F_BUILDGROUPID(+)=h.F_BUILDGROUPID";
         DataTable dataTable=new DataTable();
         final List<Gateway> builds=new ArrayList<Gateway>();
@@ -115,7 +116,7 @@ public class MaintenanceDao {
     }
 
     public Gateway getGatewayById(String id){
-        String sql="select a.*,b.F_EQUIPID AS F_EQUIP,c.F_BATCH,c.F_MODEL,d.F_TYPE,d.F_SUBTYPE,b.F_INSTALLTYPE,t.F_BUILDGROUPNAME,e.F_BUILDNAME,f.F_NAME AS FLOOR,g.F_NAME AS ROOM,b.F_LONGITUDE,b.F_LATITUDE,b.F_REMARK from T_BE_GATEWAY a,T_BE_EQUIPMENTLIST b,T_BE_EQUIPMENTBATCH c,T_BE_EQUIPMENTTYPE d,T_BD_GROUPBUILDRELA h,T_BD_GROUP t,T_BD_BUILD e,T_BD_FLOOR f,T_BD_ROOM g " +
+        String sql="select a.*,b.F_EQUIPID AS F_EQUIP,c.F_BATCH,c.F_MODEL,d.F_TYPE,d.F_SUBTYPE,b.F_INSTALLTYPE,t.F_BUILDGROUPNAME,e.F_BUILDNAME,f.F_NAME AS FLOOR,g.F_NAME AS ROOM,b.F_LONGITUDE,b.F_LATITUDE,b.F_REMARK from T_BE_GATEWAY a,T_BE_EQUIPMENTLIST b,T_BE_EQUIPMENTBATCH c,T_BE_EQUIPMENTTYPE d,T_BD_BUILDGROUPRELAINFO h,T_BD_BUILDGROUPBASEINFO t,T_BD_BUILDBASEINFO e,T_BD_FLOOR f,T_BD_ROOM g " +
                 "where a.F_UUID=b.F_UUID AND a.F_BATCHID=c.F_UUID AND b.F_TYPEID=d.F_UUID AND b.F_BUILDID=e.F_BUILDID(+) AND b.F_FLOORID=f.F_ID(+) AND b.F_ROOMID=g.F_ID(+) AND h.F_BUILDID(+)=b.F_BUILDID AND t.F_BUILDGROUPID(+)=h.F_BUILDGROUPID AND a.F_UUID=?";
         Object[] args={id};
         final Gateway gateway=new Gateway();
@@ -421,9 +422,9 @@ public class MaintenanceDao {
 
 
     public DataTable getGatewaychild(String gatewayuuid) {
-        String sqlammeter="select a.*,x.F_ADDRESS AS GATEWAY,b.F_EQUIPID AS F_EQUIP,c.F_BATCH,c.F_MODEL,b.F_TYPEID,d.F_TYPE,d.F_SUBTYPE,b.F_INSTALLTYPE,t.F_BUILDGROUPNAME,e.F_BUILDNAME,f.F_NAME AS FLOOR,g.F_NAME AS ROOM,b.F_LONGITUDE,b.F_LATITUDE,b.F_REMARK from T_BE_AMMETER a,T_BE_EQUIPMENTLIST b,T_BE_EQUIPMENTBATCH c,T_BE_EQUIPMENTTYPE d,T_BD_GROUPBUILDRELA h,T_BD_GROUP t,T_BD_BUILD e,T_BD_FLOOR f,T_BD_ROOM g,T_BE_GATEWAY x " +
+        String sqlammeter="select a.*,x.F_ADDRESS AS GATEWAY,b.F_EQUIPID AS F_EQUIP,c.F_BATCH,c.F_MODEL,b.F_TYPEID,d.F_TYPE,d.F_SUBTYPE,b.F_INSTALLTYPE,t.F_BUILDGROUPNAME,e.F_BUILDNAME,f.F_NAME AS FLOOR,g.F_NAME AS ROOM,b.F_LONGITUDE,b.F_LATITUDE,b.F_REMARK from T_BE_AMMETER a,T_BE_EQUIPMENTLIST b,T_BE_EQUIPMENTBATCH c,T_BE_EQUIPMENTTYPE d,T_BD_BUILDGROUPRELAINFO h,T_BD_BUILDGROUPBASEINFO t,T_BD_BUILDBASEINFO e,T_BD_FLOOR f,T_BD_ROOM g,T_BE_GATEWAY x " +
                 "where a.F_GATEWAYS_UUID=x.F_UUID(+) AND a.F_UUID=b.F_UUID AND a.F_BATCHID=c.F_UUID AND b.F_TYPEID=d.F_UUID AND b.F_BUILDID=e.F_BUILDID(+) AND b.F_FLOORID=f.F_ID(+) AND b.F_ROOMID=g.F_ID(+) AND h.F_BUILDID(+)=b.F_BUILDID AND t.F_BUILDGROUPID(+)=h.F_BUILDGROUPID AND a.F_GATEWAYS_UUID='"+gatewayuuid+"'";
-        String sqlwatermeter="select a.*,x.F_ADDRESS AS GATEWAY,b.F_EQUIPID AS F_EQUIP,c.F_BATCH,c.F_MODEL,b.F_TYPEID,d.F_TYPE,d.F_SUBTYPE,b.F_INSTALLTYPE,t.F_BUILDGROUPNAME,e.F_BUILDNAME,f.F_NAME AS FLOOR,g.F_NAME AS ROOM,b.F_LONGITUDE,b.F_LATITUDE,b.F_REMARK from T_BE_WATERMETER a,T_BE_EQUIPMENTLIST b,T_BE_EQUIPMENTBATCH c,T_BE_EQUIPMENTTYPE d,T_BD_GROUPBUILDRELA h,T_BD_GROUP t,T_BD_BUILD e,T_BD_FLOOR f,T_BD_ROOM g,T_BE_GATEWAY x " +
+        String sqlwatermeter="select a.*,x.F_ADDRESS AS GATEWAY,b.F_EQUIPID AS F_EQUIP,c.F_BATCH,c.F_MODEL,b.F_TYPEID,d.F_TYPE,d.F_SUBTYPE,b.F_INSTALLTYPE,t.F_BUILDGROUPNAME,e.F_BUILDNAME,f.F_NAME AS FLOOR,g.F_NAME AS ROOM,b.F_LONGITUDE,b.F_LATITUDE,b.F_REMARK from T_BE_WATERMETER a,T_BE_EQUIPMENTLIST b,T_BE_EQUIPMENTBATCH c,T_BE_EQUIPMENTTYPE d,T_BD_BUILDGROUPRELAINFO h,T_BD_BUILDGROUPBASEINFO t,T_BD_BUILDBASEINFO e,T_BD_FLOOR f,T_BD_ROOM g,T_BE_GATEWAY x " +
                 "where a.F_GATEWAYS_UUID=x.F_UUID(+) AND a.F_UUID=b.F_UUID AND a.F_BATCHID=c.F_UUID AND b.F_TYPEID=d.F_UUID AND b.F_BUILDID=e.F_BUILDID(+) AND b.F_FLOORID=f.F_ID(+) AND b.F_ROOMID=g.F_ID(+) AND h.F_BUILDID(+)=b.F_BUILDID AND t.F_BUILDGROUPID(+)=h.F_BUILDGROUPID AND a.F_GATEWAYS_UUID='"+gatewayuuid+"'";
 
         DataTable dataTable=new DataTable();
@@ -544,7 +545,7 @@ public class MaintenanceDao {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public DataTable getAllAmmeters(){
         String sql="select a.*,to_char(a.F_LAST_15,'YYYY-MM-dd HH24:mi') AS LAST_15,to_char(a.F_LAST_DAY,'YYYY-MM-dd') AS LAST_DAY,to_char(a.F_LAST_MON,'YYYY-MM') AS LAST_MON,to_char(a.F_NEWEST_DATA_TIME,'YYYY-MM-dd HH24:mi:SS') AS NEWEST_DATA_TIME,to_char(a.F_NEWEST_OPERATE_TIME,'YYYY-MM-dd HH24:mi:SS') AS NEWEST_OPERATE_TIME,(sysdate-a.F_NEWEST_OPERATE_TIME) AS TIME_INTERVAL,(sysdate-a.F_NEWEST_VALID_DATA_TIME) AS TIME_INTERVAL_CUT,a.F_EQUIPMENT_STATUE as STATUE," +
-                "x.F_ADDRESS AS GATEWAY,x.F_UUID AS GATEWAYID,b.F_EQUIPID AS F_EQUIP,c.F_BATCH,c.F_MODEL,b.F_TYPEID,d.F_TYPE,d.F_SUBTYPE,b.F_INSTALLTYPE,t.F_BUILDGROUPNAME,e.F_BUILDNAME,f.F_NAME AS FLOOR,g.F_NAME AS ROOM,b.F_LONGITUDE,b.F_LATITUDE,b.F_REMARK,a.F_cut from T_BE_AMMETER a,T_BE_EQUIPMENTLIST b,T_BE_EQUIPMENTBATCH c,T_BE_EQUIPMENTTYPE d,T_BD_GROUPBUILDRELA h,T_BD_GROUP t,T_BD_BUILD e,T_BD_FLOOR f,T_BD_ROOM g,T_BE_GATEWAY x " +
+                "x.F_ADDRESS AS GATEWAY,x.F_UUID AS GATEWAYID,b.F_EQUIPID AS F_EQUIP,c.F_BATCH,c.F_MODEL,b.F_TYPEID,d.F_TYPE,d.F_SUBTYPE,b.F_INSTALLTYPE,t.F_BUILDGROUPNAME,e.F_BUILDNAME,f.F_NAME AS FLOOR,g.F_NAME AS ROOM,b.F_LONGITUDE,b.F_LATITUDE,b.F_REMARK,a.F_cut from T_BE_AMMETER a,T_BE_EQUIPMENTLIST b,T_BE_EQUIPMENTBATCH c,T_BE_EQUIPMENTTYPE d,T_BD_BUILDGROUPRELAINFO h,T_BD_BUILDGROUPBASEINFO t,T_BD_BUILDBASEINFO e,T_BD_FLOOR f,T_BD_ROOM g,T_BE_GATEWAY x " +
                 "where a.F_GATEWAYS_UUID=x.F_UUID(+) AND a.F_UUID=b.F_UUID AND a.F_BATCHID=c.F_UUID AND b.F_TYPEID=d.F_UUID AND b.F_BUILDID=e.F_BUILDID(+) AND b.F_FLOORID=f.F_ID(+) AND b.F_ROOMID=g.F_ID(+) AND h.F_BUILDID(+)=b.F_BUILDID AND t.F_BUILDGROUPID(+)=h.F_BUILDGROUPID AND (x.F_ADDRESS IS NOT NULL OR b.F_INSTALLTYPE IS NOT NULL)";
         DataTable dataTable=new DataTable();
         final SimpleDateFormat df_15=new SimpleDateFormat("yyyy-MM-dd HH:mm");//设置日期格式
@@ -601,10 +602,10 @@ public class MaintenanceDao {
                 if(rs.getDouble("F_NEWEST_DATA") == -1&&rs.getInt("STATUE")>3)
                     ammeter.setStatus(2);//故障
                 else
-                if(rs.getDouble("F_NEWEST_DATA") == -2||rs.getDouble("TIME_INTERVAL") >= 0.0208)
+                if((rs.getDouble("TIME_INTERVAL") >= 0.0208))
                     ammeter.setStatus(1);//离线
                 else
-                if(rs.getDouble("F_NEWEST_VALID_DATA")>rs.getDouble("F_NEWEST_DATA")&&rs.getDouble("F_NEWEST_DATA")!=-1&&rs.getInt("STATUE")==0)
+                if(rs.getDouble("F_NEWEST_VALID_DATA")>rs.getDouble("F_NEWEST_DATA")&&rs.getDouble("F_NEWEST_VALID_DATA")!=-1&&rs.getInt("STATUE")==0)
                     ammeter.setStatus(3);//底度
 
                 Date datenow=new Date();
@@ -646,7 +647,7 @@ public class MaintenanceDao {
 
     public Ammeter getAmmeterById(String id){
         String sql="select a.*,to_char(a.F_LAST_15,'YYYY-MM-dd HH24:mi') AS LAST_15,to_char(a.F_LAST_DAY,'YYYY-MM-dd') AS LAST_DAY," +
-                "to_char(a.F_LAST_MON,'YYYY-MM') AS LAST_MON,b.F_EQUIPID AS F_EQUIP,c.F_BATCH,c.F_MODEL,d.F_TYPE,d.F_SUBTYPE,b.F_INSTALLTYPE,t.F_BUILDGROUPNAME,e.F_BUILDNAME,f.F_NAME AS FLOOR,g.F_NAME AS ROOM,b.F_LONGITUDE,b.F_LATITUDE,b.F_REMARK from ECSS.T_BE_AMMETER a,ECSS.T_BE_EQUIPMENTLIST b,ECSS.T_BE_EQUIPMENTBATCH c,ECSS.T_BE_EQUIPMENTTYPE d,ECSS.T_BD_GROUPBUILDRELA h,ECSS.T_BD_GROUP t,ECSS.T_BD_BUILD e,ECSS.T_BD_FLOOR f,ECSS.T_BD_ROOM g ,ECSSTEMP.T_NODES n  " +
+                "to_char(a.F_LAST_MON,'YYYY-MM') AS LAST_MON,b.F_EQUIPID AS F_EQUIP,c.F_BATCH,c.F_MODEL,d.F_TYPE,d.F_SUBTYPE,b.F_INSTALLTYPE,t.F_BUILDGROUPNAME,e.F_BUILDNAME,f.F_NAME AS FLOOR,g.F_NAME AS ROOM,b.F_LONGITUDE,b.F_LATITUDE,b.F_REMARK from ECSS.T_BE_AMMETER a,ECSS.T_BE_EQUIPMENTLIST b,ECSS.T_BE_EQUIPMENTBATCH c,ECSS.T_BE_EQUIPMENTTYPE d,ECSS.T_BD_BUILDGROUPRELAINFO h,ECSS.T_BD_BUILDGROUPBASEINFO t,ECSS.T_BD_BUILDBASEINFO e,ECSS.T_BD_FLOOR f,ECSS.T_BD_ROOM g ,ECSSTEMP.T_NODES n  " +
                 "where a.F_UUID=b.F_UUID AND a.F_BATCHID=c.F_UUID AND b.F_TYPEID=d.F_UUID AND b.F_BUILDID=e.F_BUILDID(+) AND b.F_FLOORID=f.F_ID(+) AND b.F_ROOMID=g.F_ID(+) AND h.F_BUILDID(+)=b.F_BUILDID AND t.F_BUILDGROUPID(+)=h.F_BUILDGROUPID AND a.F_UUID=? AND a.F_UUID=n.F_UUID";
         Object[] args={id};
         final SimpleDateFormat df_15=new SimpleDateFormat("yyyy-MM-dd HH:mm");//设置日期格式
@@ -959,7 +960,7 @@ public class MaintenanceDao {
             else {
                 sql_set_cmd= "insert into t_tasks( f_uuid, F_GATEWAY_UUID, f_node_uuid, f_type_backup, f_flag_backup,f_send) values(?,?,?,?,?,?)";
             }
-            String cmd_reg=GFP_T_Modbus.packing((ammeter.getSpeed()+ammeter.getPort()), ammeter.getAddress(),cmd);//生成指令序列
+            String cmd_reg= GFP_T_Modbus.packing((ammeter.getSpeed()+ammeter.getPort()), ammeter.getAddress(),cmd);//生成指令序列
             Object[] args_set_cmd={uuid,ammeter.getGateway(),ids.split(",")[0],"1","71",cmd_reg};
 
             String sql_wait_success= "";
@@ -1025,7 +1026,7 @@ public class MaintenanceDao {
     ///////////////////////////////////////////////////////////////////
     public DataTable getAllWatermeters(){
         String sql="select a.*,to_char(a.F_NEWEST_DATA_TIME,'YYYY-MM-dd HH24:mi:SS') AS NEWEST_DATA_TIME,to_char(a.F_NEWEST_OPERATE_TIME,'YYYY-MM-dd HH24:mi:SS') AS NEWEST_OPERATE_TIME,(sysdate-a.F_NEWEST_OPERATE_TIME) AS TIME_INTERVAL,a.F_EQUIPMENT_STATUE as STATUE, " +
-                "x.F_ADDRESS AS GATEWAY,b.F_EQUIPID AS F_EQUIP,c.F_BATCH,c.F_MODEL,d.F_TYPE,d.F_SUBTYPE,b.F_INSTALLTYPE,t.F_BUILDGROUPNAME,e.F_BUILDNAME,f.F_NAME AS FLOOR,g.F_NAME AS ROOM,b.F_LONGITUDE,b.F_LATITUDE,b.F_REMARK from T_BE_WATERMETER a,T_BE_EQUIPMENTLIST b,T_BE_EQUIPMENTBATCH c,T_BE_EQUIPMENTTYPE d,T_BD_GROUPBUILDRELA h,T_BD_GROUP t,T_BD_BUILD e,T_BD_FLOOR f,T_BD_ROOM g,T_BE_GATEWAY x " +
+                "x.F_ADDRESS AS GATEWAY,b.F_EQUIPID AS F_EQUIP,c.F_BATCH,c.F_MODEL,d.F_TYPE,d.F_SUBTYPE,b.F_INSTALLTYPE,t.F_BUILDGROUPNAME,e.F_BUILDNAME,f.F_NAME AS FLOOR,g.F_NAME AS ROOM,b.F_LONGITUDE,b.F_LATITUDE,b.F_REMARK from T_BE_WATERMETER a,T_BE_EQUIPMENTLIST b,T_BE_EQUIPMENTBATCH c,T_BE_EQUIPMENTTYPE d,T_BD_BUILDGROUPRELAINFO h,T_BD_BUILDGROUPBASEINFO t,T_BD_BUILDBASEINFO e,T_BD_FLOOR f,T_BD_ROOM g,T_BE_GATEWAY x " +
                 "where a.F_GATEWAYS_UUID=x.F_UUID(+) AND a.F_UUID=b.F_UUID AND a.F_BATCHID=c.F_UUID AND b.F_TYPEID=d.F_UUID AND b.F_BUILDID=e.F_BUILDID(+) AND b.F_FLOORID=f.F_ID(+) AND b.F_ROOMID=g.F_ID(+) AND h.F_BUILDID(+)=b.F_BUILDID AND t.F_BUILDGROUPID(+)=h.F_BUILDGROUPID AND (x.F_ADDRESS IS NOT NULL OR b.F_INSTALLTYPE IS NOT NULL)";
         DataTable dataTable=new DataTable();
         final List<Watermeter> builds=new ArrayList<Watermeter>();
@@ -1065,13 +1066,10 @@ public class MaintenanceDao {
                 watermeter.setNewest_valid_data_time(rs.getString("F_NEWEST_VALID_DATA_TIME"));
                 watermeter.setNewest_operate_time(rs.getString("NEWEST_OPERATE_TIME"));
                 watermeter.setRemarkinfo(rs.getString("F_REMARKINFO"));
-                if(rs.getInt("F_USE") == 0)
-                    watermeter.setStatus(4);//关闭
-                else
                 if(rs.getDouble("F_NEWEST_DATA") == -1&&rs.getInt("STATUE")>3)
                     watermeter.setStatus(2);//故障
                 else
-                if((rs.getDouble("F_NEWEST_DATA") == -2)||(rs.getDouble("TIME_INTERVAL") >= 0.0208))
+                if((rs.getDouble("F_NEWEST_DATA") == -2)||(rs.getInt("F_USE") == 0)||(rs.getDouble("TIME_INTERVAL") >= 0.0208))
                     watermeter.setStatus(1);//离线
                 builds.add(watermeter);
             }
@@ -1081,7 +1079,7 @@ public class MaintenanceDao {
     }
     public Watermeter getWatermeterById(String id){
         String sql="select a.*,to_char(a.F_LAST_15,'YYYY-MM-dd HH24:mi') AS LAST_15,to_char(a.F_LAST_DAY,'YYYY-MM-dd') AS LAST_DAY," +
-                "to_char(a.F_LAST_MON,'YYYY-MM') AS LAST_MON,b.F_EQUIPID AS F_EQUIP,c.F_BATCH,c.F_MODEL,d.F_TYPE,d.F_SUBTYPE,b.F_INSTALLTYPE,t.F_BUILDGROUPNAME,e.F_BUILDNAME,f.F_NAME AS FLOOR,g.F_NAME AS ROOM,b.F_LONGITUDE,b.F_LATITUDE,b.F_REMARK from ECSS.T_BE_WATERMETER a,ECSS.T_BE_EQUIPMENTLIST b,ECSS.T_BE_EQUIPMENTBATCH c,ECSS.T_BE_EQUIPMENTTYPE d,ECSS.T_BD_GROUPBUILDRELA h,ECSS.T_BD_GROUP t,ECSS.T_BD_BUILD e,ECSS.T_BD_FLOOR f,ECSS.T_BD_ROOM g " +
+                "to_char(a.F_LAST_MON,'YYYY-MM') AS LAST_MON,b.F_EQUIPID AS F_EQUIP,c.F_BATCH,c.F_MODEL,d.F_TYPE,d.F_SUBTYPE,b.F_INSTALLTYPE,t.F_BUILDGROUPNAME,e.F_BUILDNAME,f.F_NAME AS FLOOR,g.F_NAME AS ROOM,b.F_LONGITUDE,b.F_LATITUDE,b.F_REMARK from ECSS.T_BE_WATERMETER a,ECSS.T_BE_EQUIPMENTLIST b,ECSS.T_BE_EQUIPMENTBATCH c,ECSS.T_BE_EQUIPMENTTYPE d,ECSS.T_BD_BUILDGROUPRELAINFO h,ECSS.T_BD_BUILDGROUPBASEINFO t,ECSS.T_BD_BUILDBASEINFO e,ECSS.T_BD_FLOOR f,ECSS.T_BD_ROOM g " +
                 "where a.F_UUID=b.F_UUID AND a.F_BATCHID=c.F_UUID AND b.F_TYPEID=d.F_UUID AND b.F_BUILDID=e.F_BUILDID(+) AND b.F_FLOORID=f.F_ID(+) AND b.F_ROOMID=g.F_ID(+) AND h.F_BUILDID(+)=b.F_BUILDID AND t.F_BUILDGROUPID(+)=h.F_BUILDGROUPID AND a.F_UUID=?";
         Object[] args={id};
         final SimpleDateFormat df_15=new SimpleDateFormat("yyyy-MM-dd HH:mm");//设置日期格式
@@ -1348,7 +1346,7 @@ public class MaintenanceDao {
 
     public List<Measure> getAllMeasures(String id){
         String sql="select a.*,b.F_ENERGYITEMNAME,NVL(c.F_BUILDGROUPNAME,'') as GROUPNAME,NVL(d.F_BUILDNAME,'') as BUILDNAME,NVL(e.F_NAME,'') as FLOORNAME,NVL(f.F_NAME,'') AS ROOMNAME "+
-                "from T_RR_DEVICERELATION a,T_DT_ENERGYITEMDICT b,T_BD_GROUP c,T_BD_BUILD d,T_BD_FLOOR e, T_BD_ROOM f  "+
+                "from T_RR_DEVICERELATION a,T_DT_ENERGYITEMDICT b,T_BD_BUILDGROUPBASEINFO c,T_BD_BUILDBASEINFO d,T_BD_FLOOR e, T_BD_ROOM f  "+
                 "WHERE  a.F_ENERGYITEMCODE=b.F_ENERGYITEMCODE AND a.F_DEVICECODE=? AND a.F_BUILDGROUPID=c.f_buildgroupid(+) and a.F_BUILDCODE=d.F_BUILDID(+) and a.F_FLOORID=e.F_ID(+) and a.f_roomid=f.F_ID(+)";
         Object[] args={id};
         final List<Measure> measures=new ArrayList<Measure>();
@@ -1374,15 +1372,15 @@ public class MaintenanceDao {
 
     public List<Superiormeter> getSuperior_meter(String level){
         String sql="select t.F_BUILDGROUPID,t.F_BUILDCODE,t.F_FLOORID,t.f_roomid,t.F_ENERGYITEMCODE,t.F_DEVICECODE as EQUIPUUID,e.F_EQUIPID AS EQUIPID,a.F_BUILDGROUPNAME AS BUIDGROUP,b.F_BUILDNAME AS BUID,c.F_NAME AS FLOOR ,d.F_NAME AS ROOM ,f.F_ENERGYITEMNAME AS ENERGYITEMNAME "+
-                "FROM T_RR_DEVICERELATION t,T_BD_GROUP a,T_BD_BUILD b,T_BD_FLOOR c, T_BD_ROOM d, T_BE_EQUIPMENTLIST e, T_DT_ENERGYITEMDICT f "+
+                "FROM T_RR_DEVICERELATION t,T_BD_BUILDGROUPBASEINFO a,T_BD_BUILDBASEINFO b,T_BD_FLOOR c, T_BD_ROOM d, T_BE_EQUIPMENTLIST e, T_DT_ENERGYITEMDICT f "+
                 "WHERE t.F_LEVEL=? and t.f_devicecode=e.F_UUID and t.F_BUILDGROUPID=a.f_buildgroupid(+) and t.F_BUILDCODE=b.F_BUILDID(+) and t.F_FLOORID=c.F_ID(+) and t.f_roomid=d.F_ID(+) and t.F_ENERGYITEMCODE=f.F_ENERGYITEMCODE "+
                 "order by t.F_BUILDGROUPID,t.F_BUILDCODE,t.F_FLOORID,t.f_roomid,t.F_ENERGYITEMCODE,t.F_DEVICECODE";
         Object[] args={level};
-        final List<Superiormeter> Superiormeter=new ArrayList<Superiormeter>();
+        final List<Superiormeter> Superiormeter=new ArrayList<com.wintoo.model.Superiormeter>();
         jdbcTemplate.query(sql, args, new RowCallbackHandler(){
             @Override
             public void processRow(ResultSet rs)throws SQLException{
-                Superiormeter superiormeter=new Superiormeter();
+                com.wintoo.model.Superiormeter superiormeter=new Superiormeter();
                 superiormeter.setBuildgroup(rs.getString("BUIDGROUP"));
                 superiormeter.setBuildgroupid(rs.getString("F_BUILDGROUPID"));
                 superiormeter.setBuild(rs.getString("BUID"));
@@ -1460,22 +1458,63 @@ public class MaintenanceDao {
         jdbcTemplate.update(sql,args);
     }
 
-    public  EnergyChart getEnergyState(EnergySearch energySearch){
+    public EnergyChart getEnergyState(EnergySearch energySearch){
+        SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");
         Energy energy= new Energy();
         String sql=null;
-        Object[] args=new Object[]{energySearch.getModelid(),energySearch.getStartdate(),energySearch.getModelid(),energySearch.getStartdate()};
+        Object[] args={energySearch.getModelid(),energySearch.getStartdate(),energySearch.getEnddate()};
 
         if(energySearch.getBasetime().equals("minutes")){
-            sql="(select F_TIME_INTERVEL_ACTIVE,to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_15_ENERGY WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')=?)" +
-                    "UNION (select F_TIME_INTERVEL_ACTIVE,to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')=?) ORDER BY time";
+            //sql="select F_CONSUM-(lag(F_CONSUM,1,F_CONSUM) over(order by F_DATATIME)),to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_WATERHISTORY WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy-mm-dd hh24:mi:ss')>=? AND to_char(F_DATATIME,'yyyy-mm-dd hh24:mi:ss')<=? ORDER BY time";
+            sql="select F_TIME_INTERVEL_ACTIVE,to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<? ORDER BY time";
+        }
+        else
+        if(energySearch.getBasetime().equals("day")){
+            sql="select F_TIME_INTERVEL_ACTIVE,to_char(F_DATATIME,'yyyy-mm-dd') as day FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=2 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<=?  ORDER BY day";
+        }
+        else
+        if(energySearch.getBasetime().equals("month")){
+            sql="select F_TIME_INTERVEL_ACTIVE,to_char(F_DATATIME,'yyyy-mm') as month FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=3 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<=?  order by month";
+        }
+        energy.setName("用电量");
+        final List<Double> ldDoubles=new ArrayList<Double>();
+        final List<String> categories=new ArrayList<String>();
+        jdbcTemplate.query(sql,args, new RowCallbackHandler() {
+            @Override
+            public void processRow(ResultSet rs) throws SQLException {
+                ldDoubles.add(rs.getDouble(1));
+                categories.add(rs.getString(2));
+            }
+        });
+        energy.setData(ldDoubles);
+        EnergyChart eChart=new EnergyChart();
+        eChart.setEnergy(energy);
+        eChart.setCategories(categories);
+        return eChart;
+    }
+    public EnergyChart getWaterState(EnergySearch energySearch){
+        SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+        Energy energy= new Energy();
+        String sql=null;
+        Object[] args={energySearch.getModelid(),energySearch.getStartdate(),energySearch.getEnddate()};
 
-            energy.setName("15分钟");
+        if(energySearch.getBasetime().equals("minutes")){
+            //sql="select F_CONSUM-(lag(F_CONSUM,1,F_CONSUM) over(order by F_DATATIME)),to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_WATERHISTORY WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy-mm-dd hh24:mi:ss')>=? AND to_char(F_DATATIME,'yyyy-mm-dd hh24:mi:ss')<=? ORDER BY time";
+            sql="select F_TIME_INTERVEL_ACTIVE,to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<? ORDER BY time";
         }
-        else {
-            sql = "(select F_ACTIVE,to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_15_ENERGY WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')=?)" +
-                    "UNION (select F_ACTIVE,to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')=?) ORDER BY time";
-            energy.setName("表盘数");
+        else
+        if(energySearch.getBasetime().equals("hour")){
+            sql="select sum(F_TIME_INTERVEL_ACTIVE),to_char(F_DATATIME,'hh24') as day FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<?  group by to_char(F_DATATIME,'hh24') ORDER BY day";
         }
+        else
+        if(energySearch.getBasetime().equals("day")){
+            sql="select sum(F_TIME_INTERVEL_ACTIVE),to_char(F_DATATIME,'yyyy-mm-dd') as day FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<?  group by to_char(F_DATATIME,'yyyy-mm-dd') ORDER BY day";
+        }
+        else
+        if(energySearch.getBasetime().equals("month")){
+            sql="select sum(F_TIME_INTERVEL_ACTIVE),to_char(F_DATATIME,'yyyy-mm') as month FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<? group by to_char(F_DATATIME,'yyyy-mm') order by month";
+        }
+        energy.setName("用水量");
         final List<Double> ldDoubles=new ArrayList<Double>();
         final List<String> categories=new ArrayList<String>();
         jdbcTemplate.query(sql,args, new RowCallbackHandler() {
@@ -1555,12 +1594,11 @@ public class MaintenanceDao {
 //        eChart.setCategories(categories);
 //        return eChart;
 //    }
-    public  EnergyChart getEnergyParameter(ParameterSearch parameterSearch){
+    public EnergyChart getEnergyParameter(ParameterSearch parameterSearch){
         SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");
         Energy energy= new Energy();
-        Object[] args={parameterSearch.getEquipid(),df.format(parameterSearch.getDatetime()),parameterSearch.getEquipid(),df.format(parameterSearch.getDatetime())};
-        String sql="(select F_"+parameterSearch.getParameter()+",to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_15_ENERGY WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy-mm-dd')=?)" +
-                "UNION (select F_"+parameterSearch.getParameter()+",to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy-mm-dd')=?) ORDER BY time";
+        Object[] args={parameterSearch.getEquipid(),df.format(parameterSearch.getDatetime())};
+        String sql="select F_"+parameterSearch.getParameter()+",to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy-mm-dd')=? ORDER BY time";
         final List<Double> ldDoubles=new ArrayList<Double>();
         final List<String> categories=new ArrayList<String>();
         jdbcTemplate.query(sql,args, new RowCallbackHandler() {
@@ -1577,27 +1615,27 @@ public class MaintenanceDao {
         eChart.setCategories(categories);
         return eChart;
     }
-//    public  EnergyChart getWaterParameter(ParameterSearch parameterSearch){
-//        SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");
-//        Energy energy= new Energy();
-//        Object[] args={parameterSearch.getEquipid(),df.format(parameterSearch.getDatetime())};
-//        String sql="select F_"+parameterSearch.getParameter()+",to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy-mm-dd')=? ORDER BY time";
-//        final List<Double> ldDoubles=new ArrayList<Double>();
-//        final List<String> categories=new ArrayList<String>();
-//        jdbcTemplate.query(sql,args, new RowCallbackHandler() {
-//            @Override
-//            public void processRow(ResultSet rs) throws SQLException {
-//                ldDoubles.add(rs.getDouble(1));
-//                categories.add(rs.getString(2));
-//            }
-//        });
-//        energy.setName(parameterSearch.getParameter());
-//        energy.setData(ldDoubles);
-//        EnergyChart eChart=new EnergyChart();
-//        eChart.setEnergy(energy);
-//        eChart.setCategories(categories);
-//        return eChart;
-//    }
+    public EnergyChart getWaterParameter(ParameterSearch parameterSearch){
+        SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+        Energy energy= new Energy();
+        Object[] args={parameterSearch.getEquipid(),df.format(parameterSearch.getDatetime())};
+        String sql="select F_"+parameterSearch.getParameter()+",to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy-mm-dd')=? ORDER BY time";
+        final List<Double> ldDoubles=new ArrayList<Double>();
+        final List<String> categories=new ArrayList<String>();
+        jdbcTemplate.query(sql,args, new RowCallbackHandler() {
+            @Override
+            public void processRow(ResultSet rs) throws SQLException {
+                ldDoubles.add(rs.getDouble(1));
+                categories.add(rs.getString(2));
+            }
+        });
+        energy.setName(parameterSearch.getParameter());
+        energy.setData(ldDoubles);
+        EnergyChart eChart=new EnergyChart();
+        eChart.setEnergy(energy);
+        eChart.setCategories(categories);
+        return eChart;
+    }
     public AmmeterData getAmmeterData(String id){
         String sql3="select F_SERVER_FLAG from T_BE_GATEWAY where F_UUID=(select F_GATEWAYS_UUID from T_BE_AMMETER where F_UUID=?)";
         Object[] args3={id};
@@ -1759,7 +1797,7 @@ public class MaintenanceDao {
         }
     }
     public WatermeterData getWaterInfo(String equipid){
-        String sql="select F_UUID,F_NEWEST_VALID_DATA,F_P,F_UA,F_NEWEST_VALID_DATA_TIME,F_REMARKINFO from (select a.F_UUID,a.F_REMARKINFO,a.F_NEWEST_VALID_DATA,a.F_NEWEST_VALID_DATA_TIME,b.* from T_BE_WATERMETER a,(select * from T_BE_15_ENERGY_BUFFER where f_datatime>sysdate-0.5) b where a.F_UUID=b.F_DEVICECODE(+) and a.F_UUID=?  order by b.F_DATATIME desc) where rownum=1";
+        String sql="select F_devicecode,F_ACTIVE,F_P,F_UA,F_DATATIME,F_REMARK from (select a.F_REMARK,b.* from T_BE_EQUIPMENTLIST a,T_BE_15_ENERGY_BUFFER b where a.F_UUID=b.F_DEVICECODE and a.F_EQUIPID=?  order by b.F_DATATIME desc) where rownum=1";
         final WatermeterData watermeterData=new WatermeterData();
         Object[] args=new Object[]{equipid};
         jdbcTemplate.query(sql, args, new RowCallbackHandler(){
@@ -1890,8 +1928,8 @@ public class MaintenanceDao {
         } catch (Exception e) {
             success=1;
         } finally{
-            String sql="select count(*) from T_BP_PICKUPLOAD where to_char(f_datatime,'yyyy/mm/dd')=?";
-            int size=(int)jdbcTemplate.queryForMap(sql,date).get("num");
+            String sql="select count(*) num from T_BP_PICKUPLOAD where to_char(f_datatime,'yyyy/mm/dd')=?";
+            int size=((BigDecimal)jdbcTemplate.queryForMap(sql,date).get("num")).intValue();
             if(size==0){
                 sql="INSERT INTO T_BP_PICKUPLOAD(F_DATATIME) VALUES(to_date(?,'yyyy/mm/dd'))";
                 jdbcTemplate.update(sql, date);
@@ -1936,12 +1974,12 @@ public class MaintenanceDao {
     public String makeBuildXml(String date,String path) throws IOException, ParseException {
         String sqlDataCenter = "select * FROM T_DC_DATACENTERBASEINFO ";
         String sqlCity = "select * FROM T_DC_CITYTEMPINFO ";
-        String sqlBuild = "select * FROM T_BD_BUILD where F_OPERATION != 'P'";
-        String sqlBuildGroup = "SELECT * FROM T_BD_GROUP where F_OPERATION != 'P'";
-        final String sqlGroupBuild = "select F_BUILDID FROM T_BD_GROUPBUILDRELA WHERE F_OPERATION != 'P' AND F_BUILDGROUPID = ?";
-        String sqlUpdate1 = "UPDATE T_BD_BUILD SET F_OPERATION = 'P' WHERE F_OPERATION != 'P'";
-        String sqlUpdate2 = "UPDATE T_BD_GROUP SET F_OPERATION = 'P' WHERE F_OPERATION != 'P'";
-        String sqlUpdate3 = "UPDATE T_BD_GROUPBUILDRELA SET F_OPERATION = 'P' WHERE F_OPERATION != 'P'";
+        String sqlBuild = "select * FROM T_BD_BUILDBASEINFO where F_OPERATION != 'P'";
+        String sqlBuildGroup = "SELECT * FROM T_BD_BUILDGROUPBASEINFO where F_OPERATION != 'P'";
+        final String sqlGroupBuild = "select F_BUILDID FROM T_BD_BUILDGROUPRELAINFO WHERE F_OPERATION != 'P' AND F_BUILDGROUPID = ?";
+        String sqlUpdate1 = "UPDATE T_BD_BUILDBASEINFO SET F_OPERATION = 'P' WHERE F_OPERATION != 'P'";
+        String sqlUpdate2 = "UPDATE T_BD_BUILDGROUPBASEINFO SET F_OPERATION = 'P' WHERE F_OPERATION != 'P'";
+        String sqlUpdate3 = "UPDATE T_BD_BUILDGROUPRELAINFO SET F_OPERATION = 'P' WHERE F_OPERATION != 'P'";
         //XML格式设置部分，固定的
         Document doc = DocumentHelper.createDocument();
         // 根节点root
@@ -2110,7 +2148,7 @@ public class MaintenanceDao {
         return F_DataCenterID1.getText();
     }
     public String makeEnergyXml(final String date,String DateCenterID,String path) throws IOException, ParseException {
-        final String sqlBuild = "select F_BUILDID FROM T_BD_BUILD ";
+        final String sqlBuild = "select F_BUILDID FROM T_BD_BUILDBASEINFO ";
         final String sqlDay = "SELECT * FROM T_EC_BUILD_DAY_BUFFER where F_BUILDID = ? and to_char(F_STARTTIME,'yyyy/mm/dd')=?";
         final String sqlHour = "SELECT * FROM T_EC_BUILD_HOUR_BUFFER where F_BUILDID = ? and to_char(F_STARTTIME,'yyyy/mm/dd')=?";
         //XML格式设置部分，固定的

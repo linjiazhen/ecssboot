@@ -1,10 +1,12 @@
 package com.wintoo.dao;
 
-import com.wintoo.model.*;
+import com.wintoo.model.DataTable;
+import com.wintoo.model.PublicBulidsInfo;
+import com.wintoo.model.PublicInfo;
+import com.wintoo.model.PublicOrganInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcOperations;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,12 +18,23 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Repository
-@Transactional
+@Transactional(value = "primaryTransactionManager")
 public class PublicDao {
 	@Autowired
     @Qualifier("primaryJdbcTemplate")
-	private JdbcOperations jdbcTemplate;
-    //private DecimalFormat df = new DecimalFormat("#.00");
+    private JdbcOperations jdbcTemplate;
+
+
+	public void setPublic(PublicInfo publicInfo){
+
+    }
+    public void setPublicOrgan(PublicOrganInfo publicOrganInfo){
+
+    }
+
+    public void setPublicBulids(PublicBulidsInfo publicBulidsInfo){
+
+    }
 
 	public String getTime(){
 		return "";
@@ -41,8 +54,8 @@ public class PublicDao {
     }
 
     public DataTable getPublic(){
-        String sql="SELECT T3.buildcode, T3.buildName, T3.area, VALUE_D, VALUE_S, T3.FUNC, T3.peopleNum, t6.F_BUILDGROUPNAME FROM (select T1.F_BUILDID as ID, T1.F_BUILDcode AS buildcode, T1.F_TOTALAREA as area, T1.F_BUILDNAME as buildName, SUM(T2.F_VALUE) AS VALUE_D, T1.F_BUILDFUNC as FUNC, T1.F_PEOPLE as peopleNum from T_BD_BUILD T1, T_EC_BUILD_YEAR T2 where T2.F_BUILDID = T1.F_BUILDID AND substr(T2.F_ENERGYITEMCODE,1,2) = '01' AND T1.F_BUILDFUNC!='M' GROUP BY T1.F_BUILDID, T1.F_BUILDcode, T1.F_TOTALAREA, T1.F_BUILDNAME, T1.F_BUILDFUNC, T1.F_PEOPLE) T3, "
-                +"    (select T1.F_BUILDcode AS buildcode, T1.F_TOTALAREA as area, T1.F_BUILDNAME as buildName, SUM(T2.F_VALUE) AS VALUE_S from T_BD_BUILD T1, T_EC_BUILD_YEAR T2 where T2.F_BUILDID = T1.F_BUILDID AND substr(T2.F_ENERGYITEMCODE,1,2) = '02'  GROUP BY T1.F_BUILDcode, T1.F_TOTALAREA, T1.F_BUILDNAME) T4, T_BD_GROUPBUILDRELA t5, T_BD_GROUP t6 where t3.buildcode=t4.buildcode(+) and t3.ID = t5.F_BUILDID and t5.F_BUILDGROUPID = t6.F_BUILDGROUPID order by t3.buildcode";
+        String sql="SELECT T3.buildcode, T3.buildName, T3.area, VALUE_D, VALUE_S, T3.FUNC, T3.peopleNum, t6.F_BUILDGROUPNAME FROM (select T1.F_BUILDID as ID, T1.F_BUILDcode AS buildcode, T1.F_TOTALAREA as area, T1.F_BUILDNAME as buildName, SUM(T2.F_VALUE) AS VALUE_D, T1.F_BUILDFUNC as FUNC, T1.F_PEOPLE as peopleNum from T_BD_BUILDBASEINFO T1, T_EC_BUILD_YEAR T2 where T2.F_BUILDID = T1.F_BUILDID AND substr(T2.F_ENERGYITEMCODE,1,2) = '01' AND T1.F_BUILDFUNC!='M' GROUP BY T1.F_BUILDID, T1.F_BUILDcode, T1.F_TOTALAREA, T1.F_BUILDNAME, T1.F_BUILDFUNC, T1.F_PEOPLE) T3, "
+                +"    (select T1.F_BUILDcode AS buildcode, T1.F_TOTALAREA as area, T1.F_BUILDNAME as buildName, SUM(T2.F_VALUE) AS VALUE_S from T_BD_BUILDBASEINFO T1, T_EC_BUILD_YEAR T2 where T2.F_BUILDID = T1.F_BUILDID AND substr(T2.F_ENERGYITEMCODE,1,2) = '02'  GROUP BY T1.F_BUILDcode, T1.F_TOTALAREA, T1.F_BUILDNAME) T4, T_BD_BUILDGROUPRELAINFO t5, T_BD_BUILDGROUPBASEINFO t6 where t3.buildcode=t4.buildcode(+) and t3.ID = t5.F_BUILDID and t5.F_BUILDGROUPID = t6.F_BUILDGROUPID order by t3.buildcode";
         final List<PublicInfo> list=new LinkedList<PublicInfo>();
         String anothersql="SELECT T1.engery, T2.water FROM "
                 +"(select sum(F_VALUE) AS engery from T_EC_BUILD_year where F_BUILDID = 'allofsumgroup' AND substr(F_ENERGYITEMCODE,1,2) = '01') T1, "
@@ -135,11 +148,11 @@ public class PublicDao {
     public DataTable getPublicBulids(){
 
         String sql="SELECT  T8.buildcode, T8.buildName, T8.Total_engery, t81.ZMCZ_engery, t82.KTYD_engery, t83.DLYD_engery, t84.TSYD_engery, t6.F_BUILDGROUPNAME FROM "
-                +" (select T1.F_BUILDID as ID, T1.F_BUILDcode AS buildcode, T1.F_BUILDNAME as buildName, SUM(T2.F_VALUE) AS Total_engery from T_BD_BUILD T1, T_EC_BUILD_year T2 where T2.F_BUILDID = T1.F_BUILDID AND substr(T2.F_ENERGYITEMCODE,1,2) = '01' AND T1.F_BUILDFUNC!='M' GROUP BY t1.F_BUILDID, T1.F_BUILDcode, T1.F_BUILDNAME) T8,"
-                +" (select T1.F_BUILDcode AS buildcode, T1.F_BUILDNAME as buildName, SUM(T2.F_VALUE) AS ZMCZ_engery from T_BD_BUILD T1, T_EC_BUILD_year T2 where T2.F_BUILDID = T1.F_BUILDID AND substr(T2.F_ENERGYITEMCODE,1,3) = '01A' GROUP BY T1.F_BUILDcode, T1.F_BUILDNAME) T81,"
-                +" (select T1.F_BUILDcode AS buildcode, T1.F_BUILDNAME as buildName, SUM(T2.F_VALUE) AS KTYD_engery from T_BD_BUILD T1, T_EC_BUILD_year T2 where T2.F_BUILDID = T1.F_BUILDID AND substr(T2.F_ENERGYITEMCODE,1,3) = '01B' GROUP BY T1.F_BUILDcode, T1.F_BUILDNAME) T82,"
-                +" (select T1.F_BUILDcode AS buildcode, T1.F_BUILDNAME as buildName, SUM(T2.F_VALUE) AS DLYD_engery from T_BD_BUILD T1, T_EC_BUILD_year T2 where T2.F_BUILDID = T1.F_BUILDID AND substr(T2.F_ENERGYITEMCODE,1,3) = '01C' GROUP BY T1.F_BUILDcode, T1.F_BUILDNAME) T83,"
-                +" (select T1.F_BUILDcode AS buildcode, T1.F_BUILDNAME as buildName, SUM(T2.F_VALUE) AS TSYD_engery from T_BD_BUILD T1, T_EC_BUILD_year T2 where T2.F_BUILDID = T1.F_BUILDID AND substr(T2.F_ENERGYITEMCODE,1,3) = '01D' GROUP BY T1.F_BUILDcode, T1.F_BUILDNAME) T84, T_BD_GROUPBUILDRELA t5, T_BD_GROUP t6"
+                +" (select T1.F_BUILDID as ID, T1.F_BUILDcode AS buildcode, T1.F_BUILDNAME as buildName, SUM(T2.F_VALUE) AS Total_engery from T_BD_BUILDBASEINFO T1, T_EC_BUILD_year T2 where T2.F_BUILDID = T1.F_BUILDID AND substr(T2.F_ENERGYITEMCODE,1,2) = '01' AND T1.F_BUILDFUNC!='M' GROUP BY t1.F_BUILDID, T1.F_BUILDcode, T1.F_BUILDNAME) T8,"
+                +" (select T1.F_BUILDcode AS buildcode, T1.F_BUILDNAME as buildName, SUM(T2.F_VALUE) AS ZMCZ_engery from T_BD_BUILDBASEINFO T1, T_EC_BUILD_year T2 where T2.F_BUILDID = T1.F_BUILDID AND substr(T2.F_ENERGYITEMCODE,1,3) = '01A' GROUP BY T1.F_BUILDcode, T1.F_BUILDNAME) T81,"
+                +" (select T1.F_BUILDcode AS buildcode, T1.F_BUILDNAME as buildName, SUM(T2.F_VALUE) AS KTYD_engery from T_BD_BUILDBASEINFO T1, T_EC_BUILD_year T2 where T2.F_BUILDID = T1.F_BUILDID AND substr(T2.F_ENERGYITEMCODE,1,3) = '01B' GROUP BY T1.F_BUILDcode, T1.F_BUILDNAME) T82,"
+                +" (select T1.F_BUILDcode AS buildcode, T1.F_BUILDNAME as buildName, SUM(T2.F_VALUE) AS DLYD_engery from T_BD_BUILDBASEINFO T1, T_EC_BUILD_year T2 where T2.F_BUILDID = T1.F_BUILDID AND substr(T2.F_ENERGYITEMCODE,1,3) = '01C' GROUP BY T1.F_BUILDcode, T1.F_BUILDNAME) T83,"
+                +" (select T1.F_BUILDcode AS buildcode, T1.F_BUILDNAME as buildName, SUM(T2.F_VALUE) AS TSYD_engery from T_BD_BUILDBASEINFO T1, T_EC_BUILD_year T2 where T2.F_BUILDID = T1.F_BUILDID AND substr(T2.F_ENERGYITEMCODE,1,3) = '01D' GROUP BY T1.F_BUILDcode, T1.F_BUILDNAME) T84, T_BD_BUILDGROUPRELAINFO t5, T_BD_BUILDGROUPBASEINFO t6"
                 +" where t8.ID = t5.F_BUILDID and t5.F_BUILDGROUPID = t6.F_BUILDGROUPID and t8.buildcode = t81.buildcode(+) and t8.buildcode = t82.buildcode(+) and t8.buildcode = t83.buildcode(+) and t8.buildcode = t84.buildcode(+) order by t8.buildcode";
         final List<PublicBulidsInfo> list=new LinkedList<PublicBulidsInfo>();
         String anothersql="SELECT  T8.Total_engery, t81.ZMCZ_engery, t82.KTYD_engery, t83.DLYD_engery, t84.TSYD_engery FROM " +

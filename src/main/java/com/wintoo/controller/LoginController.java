@@ -28,7 +28,7 @@ public class LoginController {
     private BaseService baseService;
     @RequestMapping(value = "login.do", method = RequestMethod.POST)
     @ResponseBody
-    public String login(HttpSession session, LoginForm loginForm ){
+    public String login(HttpSession session,LoginForm loginForm ){
         //if ((((String)session.getAttribute("check")).toLowerCase()).equals(loginForm.getCheck().toLowerCase())){
             if (baseService.checklogin(loginForm)) {
                 session.setAttribute("islogin", true);

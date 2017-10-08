@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-@Transactional
+@Transactional(value = "primaryTransactionManager")
 public class OrganDao {
 	@Autowired
 	@Qualifier("primaryJdbcTemplate")
@@ -133,14 +133,14 @@ public class OrganDao {
 		String sql;
 		String[] ids=id.split(",");
 		if(ids[1].equals("#")){
-			sql="select distinct F_BUILDID,F_BUILDNAME from T_BD_BUILD where F_BUILDID NOT IN (SELECT F_BUILDID FROM T_RR_ORGANBUILDRELATION WHERE F_ORGANID = ?) order by F_BUILDNAME";
+			sql="select distinct F_BUILDID,F_BUILDNAME from T_BD_BUILDBASEINFO where F_BUILDID NOT IN (SELECT F_BUILDID FROM T_RR_ORGANBUILDRELATION WHERE F_ORGANID = ?) order by F_BUILDNAME";
 			id="00";
 		}
 		else{
 			if(ids[0].equals("2"))
-				sql="select distinct A.F_BUILDID,A.F_BUILDNAME from T_BD_BUILD A,T_RR_ORGANBUILDRELATION B where B.F_ORGANID=? AND A.F_BUILDID=B.F_BUILDID AND B.F_BUILDID NOT IN (SELECT F_BUILDID FROM T_RR_ORGANBUILDRELATION WHERE F_ORGANID LIKE '"+ids[1]+"__')";
+				sql="select distinct A.F_BUILDID,A.F_BUILDNAME from T_BD_BUILDBASEINFO A,T_RR_ORGANBUILDRELATION B where B.F_ORGANID=? AND A.F_BUILDID=B.F_BUILDID AND B.F_BUILDID NOT IN (SELECT F_BUILDID FROM T_RR_ORGANBUILDRELATION WHERE F_ORGANID LIKE '"+ids[1]+"__')";
 			else {
-				sql="select distinct A.F_BUILDID,A.F_BUILDNAME from T_BD_BUILD A,T_RR_ORGANBUILDRELATION B where B.F_ORGANID=? AND A.F_BUILDID=B.F_BUILDID AND B.F_BUILDID NOT IN (SELECT F_BUILDID FROM T_RR_ORGANBUILDRELATION WHERE F_ORGANID LIKE '"+ids[1]+"__' AND F_SIGN='2')";
+				sql="select distinct A.F_BUILDID,A.F_BUILDNAME from T_BD_BUILDBASEINFO A,T_RR_ORGANBUILDRELATION B where B.F_ORGANID=? AND A.F_BUILDID=B.F_BUILDID AND B.F_BUILDID NOT IN (SELECT F_BUILDID FROM T_RR_ORGANBUILDRELATION WHERE F_ORGANID LIKE '"+ids[1]+"__' AND F_SIGN='2')";
 			}
 			id=ids[1];
 		}

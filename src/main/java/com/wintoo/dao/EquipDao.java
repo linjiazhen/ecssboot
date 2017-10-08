@@ -19,11 +19,12 @@ import java.util.UUID;
 
 
 @Repository
-@Transactional
+@Transactional(value = "primaryTransactionManager")
 public class EquipDao {
 	@Autowired
 	@Qualifier("primaryJdbcTemplate")
 	private JdbcOperations jdbcTemplate;
+
 	@Autowired
 	@Qualifier("secondaryJdbcTemplate")
 	private JdbcOperations jdbcTemplate1;
@@ -42,11 +43,11 @@ public class EquipDao {
 	public List<Options> getEquipSubtype(String type){
 		String sql="select DISTINCT F_UUID,F_SUBTYPE from T_BE_EQUIPMENTTYPE WHERE F_TYPE=?";
 		String[] args={type};
-		final List<Options> Options=new ArrayList<Options>();
+		final List<Options> Options=new ArrayList<com.wintoo.model.Options>();
 		jdbcTemplate.query(sql, args, new RowCallbackHandler(){
 			@Override
 			public void processRow(ResultSet rs)throws SQLException{
-				Options option=new Options();
+				com.wintoo.model.Options option=new Options();
 				option.setId(rs.getString("F_UUID"));
 				option.setName(rs.getString("F_SUBTYPE"));
 				Options.add(option);
@@ -234,7 +235,7 @@ public class EquipDao {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	public DataTable getAllEquipLists(){
 		String sql="select NVL(NVL(gateway1,gateway2),'未配置') as gateway, a.F_UUID,a.F_EQUIPID,a.F_BATCHID,a.F_TYPEID,f.F_BATCH,b.F_TYPE,b.F_SUBTYPE,f.F_MODEL,a.F_INSTALLTYPE,t.F_BUILDGROUPNAME,c.F_BUILDNAME,d.F_NAME AS D_F_NAME,e.F_NAME AS E_F_NAME,a.F_LONGITUDE,a.F_LATITUDE,a.F_REMARK "+
-					"from T_BD_GROUPBUILDRELA h,T_BD_GROUP t,T_BE_EQUIPMENTLIST a,T_BE_EQUIPMENTTYPE b,T_BD_BUILD c,T_BD_FLOOR d,T_BD_ROOM e ,T_BE_EQUIPMENTBATCH f,"+
+					"from T_BD_BUILDGROUPRELAINFO h,T_BD_BUILDGROUPBASEINFO t,T_BE_EQUIPMENTLIST a,T_BE_EQUIPMENTTYPE b,T_BD_BUILDBASEINFO c,T_BD_FLOOR d,T_BD_ROOM e ,T_BE_EQUIPMENTBATCH f,"+
 					"(select t2.f_address||'-'||t1.f_use||'-'||lpad(t1.f_pn,3,'0') as gateway1,t3.f_uuid as uuid1 from t_be_ammeter t1,t_be_gateway t2,T_BE_EQUIPMENTLIST t3 where t3.f_uuid=t1.f_uuid and t1.f_gateways_uuid=t2.f_uuid),"+
 					"(select t2.f_address||'-'||t1.f_use||'-'||lpad(t1.f_pn,3,'0') as gateway2,t3.f_uuid as uuid2 from t_be_watermeter t1,t_be_gateway t2,T_BE_EQUIPMENTLIST t3 where t3.f_uuid=t1.f_uuid and t1.f_gateways_uuid=t2.f_uuid) "+
 					"where a.f_uuid=uuid1(+) and a.f_uuid=uuid2(+) and a.F_BATCHID=f.F_UUID AND a.F_TYPEID=b.F_UUID AND a.F_BUILDID=c.F_BUILDID(+) AND a.F_FLOORID=d.F_ID(+) AND a.F_ROOMID=e.F_ID(+) AND h.F_BUILDID(+)=a.F_BUILDID AND t.F_BUILDGROUPID(+)=h.F_BUILDGROUPID ";
@@ -378,7 +379,7 @@ public class EquipDao {
 	}
 	public List<EquipList> getEquipListByBatchid(String batchid){
 		String sql="select NVL(NVL(gateway1,gateway2),'未配置') as gateway, NVL(NVL(remarkinfo1,remarkinfo2),'-') as remarkinfo , a.F_UUID,a.F_EQUIPID,a.F_BATCHID,a.F_TYPEID,a.F_CONNECTNUM,f.F_BATCH,b.F_TYPE,b.F_SUBTYPE,f.F_MODEL,a.F_INSTALLTYPE,t.F_BUILDGROUPNAME,c.F_BUILDNAME,d.F_NAME AS D_F_NAME,e.F_NAME AS E_F_NAME,a.F_LONGITUDE,a.F_LATITUDE,a.F_REMARK "+
-				"from T_BD_GROUPBUILDRELA h,T_BD_GROUP t,T_BE_EQUIPMENTLIST a,T_BE_EQUIPMENTTYPE b,T_BD_BUILD c,T_BD_FLOOR d,T_BD_ROOM e ,T_BE_EQUIPMENTBATCH f,"+
+				"from T_BD_BUILDGROUPRELAINFO h,T_BD_BUILDGROUPBASEINFO t,T_BE_EQUIPMENTLIST a,T_BE_EQUIPMENTTYPE b,T_BD_BUILDBASEINFO c,T_BD_FLOOR d,T_BD_ROOM e ,T_BE_EQUIPMENTBATCH f,"+
 				"(select t2.f_address||'-'||t1.f_use||'-'||lpad(t1.f_pn,3,'0') as gateway1,t3.f_uuid as uuid1,t1.F_REMARKINFO remarkinfo1 from t_be_ammeter t1,t_be_gateway t2,T_BE_EQUIPMENTLIST t3 where t3.f_uuid=t1.f_uuid and t1.f_gateways_uuid=t2.f_uuid),"+
 				"(select t2.f_address||'-'||t1.f_use||'-'||lpad(t1.f_pn,3,'0') as gateway2,t3.f_uuid as uuid2,t1.F_REMARKINFO remarkinfo2 from t_be_watermeter t1,t_be_gateway t2,T_BE_EQUIPMENTLIST t3 where t3.f_uuid=t1.f_uuid and t1.f_gateways_uuid=t2.f_uuid) "+
 				"where a.f_uuid=uuid1(+) and a.f_uuid=uuid2(+) and a.F_BATCHID=f.F_UUID AND a.F_TYPEID=b.F_UUID AND a.F_BUILDID=c.F_BUILDID(+) AND a.F_FLOORID=d.F_ID(+) AND a.F_ROOMID=e.F_ID(+) AND h.F_BUILDID(+)=a.F_BUILDID AND t.F_BUILDGROUPID(+)=h.F_BUILDGROUPID AND a.F_BATCHID=?";
@@ -473,7 +474,7 @@ public class EquipDao {
 
 	public List<Measure> getAllMeasures(String id){
 		String sql="select a.*,b.F_ENERGYITEMCODE,b.F_ENERGYITEMNAME,NVL(c.F_BUILDGROUPNAME,'') as GROUPNAME,NVL(d.F_BUILDNAME,'') as BUILDNAME,NVL(e.F_NAME,'') as FLOORNAME,NVL(f.F_NAME,'') AS ROOMNAME "+
-				"from T_RR_DEVICERELATION a,T_DT_ENERGYITEMDICT b,T_BD_GROUP c,T_BD_BUILD d,T_BD_FLOOR e, T_BD_ROOM f  "+
+				"from T_RR_DEVICERELATION a,T_DT_ENERGYITEMDICT b,T_BD_BUILDGROUPBASEINFO c,T_BD_BUILDBASEINFO d,T_BD_FLOOR e, T_BD_ROOM f  "+
 				"WHERE  a.F_ENERGYITEMCODE=b.F_ENERGYITEMCODE AND a.F_DEVICECODE=? AND a.F_BUILDGROUPID=c.f_buildgroupid(+) and a.F_BUILDCODE=d.F_BUILDID(+) and a.F_FLOORID=e.F_ID(+) and a.f_roomid=f.F_ID(+)";
 		Object[] args={id};
 		final List<Measure> measures=new ArrayList<Measure>();
@@ -497,7 +498,6 @@ public class EquipDao {
 				measure.setFloor(rs.getString("FLOORNAME"));
 				measure.setRoom(rs.getString("ROOMNAME"));
 				measure.setRemark(rs.getString("F_REMARK"));
-                measure.setSuperior_meter_level(rs.getInt("F_SUPERIOR_METER_LEVEL"));
 				measures.add(measure);
 			}
 		});
@@ -507,15 +507,15 @@ public class EquipDao {
 
 	public List<Superiormeter> getSuperior_meter(String level){
 		String sql="select t.F_BUILDGROUPID,t.F_BUILDCODE,t.F_FLOORID,t.f_roomid,t.F_ENERGYITEMCODE,t.F_DEVICECODE as EQUIPUUID,e.F_EQUIPID AS EQUIPID,a.F_BUILDGROUPNAME AS BUIDGROUP,b.F_BUILDNAME AS BUID,c.F_NAME AS FLOOR ,d.F_NAME AS ROOM ,f.F_ENERGYITEMNAME AS ENERGYITEMNAME "+
-				"FROM T_RR_DEVICERELATION t,T_BD_GROUP a,T_BD_BUILD b,T_BD_FLOOR c, T_BD_ROOM d, T_BE_EQUIPMENTLIST e, T_DT_ENERGYITEMDICT f "+
+				"FROM T_RR_DEVICERELATION t,T_BD_BUILDGROUPBASEINFO a,T_BD_BUILDBASEINFO b,T_BD_FLOOR c, T_BD_ROOM d, T_BE_EQUIPMENTLIST e, T_DT_ENERGYITEMDICT f "+
 				"WHERE t.F_LEVEL=? and t.f_devicecode=e.F_UUID and t.F_BUILDGROUPID=a.f_buildgroupid(+) and t.F_BUILDCODE=b.F_BUILDID(+) and t.F_FLOORID=c.F_ID(+) and t.f_roomid=d.F_ID(+) and t.F_ENERGYITEMCODE=f.F_ENERGYITEMCODE "+
 				"order by t.F_BUILDGROUPID,t.F_BUILDCODE,t.F_FLOORID,t.f_roomid,t.F_ENERGYITEMCODE,t.F_DEVICECODE";
 		Object[] args={level};
-		final List<Superiormeter> Superiormeter=new ArrayList<Superiormeter>();
+		final List<Superiormeter> Superiormeter=new ArrayList<com.wintoo.model.Superiormeter>();
 		jdbcTemplate.query(sql, args, new RowCallbackHandler(){
 			@Override
 			public void processRow(ResultSet rs)throws SQLException{
-				Superiormeter superiormeter=new Superiormeter();
+				com.wintoo.model.Superiormeter superiormeter=new Superiormeter();
 				superiormeter.setBuildgroup(rs.getString("BUIDGROUP"));
 				superiormeter.setBuildgroupid(rs.getString("F_BUILDGROUPID"));
 				superiormeter.setBuild(rs.getString("BUID"));

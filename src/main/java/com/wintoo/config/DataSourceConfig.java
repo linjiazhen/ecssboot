@@ -15,28 +15,29 @@ import javax.sql.DataSource;
 
 @Configuration
 public class DataSourceConfig {
+
     @Bean(name = "primaryDataSource")
     @Qualifier("primaryDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.primary")
+    @Primary
+    @ConfigurationProperties(prefix="spring.datasource.primary")
     public DataSource primaryDataSource() {
         return DataSourceBuilder.create().build();
     }
 
     @Bean(name = "secondaryDataSource")
     @Qualifier("secondaryDataSource")
-    @Primary
-    @ConfigurationProperties(prefix = "spring.datasource.secondary")
+    @ConfigurationProperties(prefix="spring.datasource.secondary")
     public DataSource secondaryDataSource() {
         return DataSourceBuilder.create().build();
     }
 
-    @Bean
+    @Bean(name = "primaryJdbcTemplate")
     public JdbcOperations primaryJdbcTemplate(
             @Qualifier("primaryDataSource") DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
 
-    @Bean
+    @Bean(name = "secondaryJdbcTemplate")
     public JdbcOperations secondaryJdbcTemplate(
             @Qualifier("secondaryDataSource") DataSource dataSource) {
         return new JdbcTemplate(dataSource);
@@ -45,6 +46,11 @@ public class DataSourceConfig {
     @Bean
     public PlatformTransactionManager primaryTransactionManager(@Qualifier("primaryDataSource") DataSource prodDataSource) {
         return new DataSourceTransactionManager(prodDataSource);
+    }
+
+    @Bean
+    public PlatformTransactionManager secondaryTransactionManager(@Qualifier("secondaryDataSource") DataSource sitDataSource) {
+        return new DataSourceTransactionManager(sitDataSource);
     }
 
 }

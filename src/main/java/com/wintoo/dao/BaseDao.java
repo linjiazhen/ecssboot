@@ -11,20 +11,22 @@ import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
 @Repository
-@Transactional
+@Transactional(value = "primaryTransactionManager")
 public class BaseDao {
     @Autowired
     @Qualifier("primaryJdbcTemplate")
     private JdbcOperations jdbcTemplate;
+
     public void addBuildPoint(String point) {
         String[] points=point.split(",");
-        String sql = "update T_BD_BUILD set F_BUILDLONG=?,F_BUILDLAT=? WHERE F_BUILDID=?";
+        String sql = "update T_BD_BUILDBASEINFO set F_BUILDLONG=?,F_BUILDLAT=? WHERE F_BUILDID=?";
         Object[] args = { points[1],points[2],points[0] };
         jdbcTemplate.update(sql, args);
     }
@@ -44,7 +46,7 @@ public class BaseDao {
         jdbcTemplate.update(sql, args);
     }
     public void deleteBuildPoint(String point) {
-        String sql = "update T_BD_BUILD set F_BUILDLONG=?,F_BUILDLAT=? WHERE F_BUILDNAME=?";
+        String sql = "update T_BD_BUILDBASEINFO set F_BUILDLONG=?,F_BUILDLAT=? WHERE F_BUILDNAME=?";
         Object[] args = { null,null,point };
         jdbcTemplate.update(sql, args);
     }
@@ -59,7 +61,7 @@ public class BaseDao {
         jdbcTemplate.update(sql, args);
     }
     public List<Point> getPoints(String type){
-        String sql = "select F_BUILDID,F_BUILDNAME,F_BUILDLONG,F_BUILDLAT from T_BD_BUILD where F_BUILDFUNC=? ";
+        String sql = "select F_BUILDID,F_BUILDNAME,F_BUILDLONG,F_BUILDLAT from T_BD_BUILDBASEINFO where F_BUILDFUNC=? ";
         Object[] args = { type };
         final List<Point> points = new ArrayList<Point>();
         jdbcTemplate.query(sql,args, new RowCallbackHandler() {
@@ -77,7 +79,7 @@ public class BaseDao {
     }
 
     public List<Point> getAllPoints(){
-        String sql = "select F_BUILDID,F_BUILDNAME,F_BUILDLONG,F_BUILDLAT from T_BD_BUILD where F_BUILDLONG!=0.0";
+        String sql = "select F_BUILDID,F_BUILDNAME,F_BUILDLONG,F_BUILDLAT from T_BD_BUILDBASEINFO where F_BUILDLONG!=0.0";
         final List<Point> points = new ArrayList<Point>();
         jdbcTemplate.query(sql, new RowCallbackHandler() {
             @Override
@@ -129,7 +131,7 @@ public class BaseDao {
     }
 
     public List<Point> getWaterPoints(){
-        String sql = "select a.F_UUID,b.F_REMARKINFO,a.F_MAPLNG,a.F_MAPLAT from T_BE_EQUIPMENTLIST a,T_BE_WATERMETER  b where a.F_UUID=b.F_UUID and a.F_INSTALLTYPE=0 and a.F_MAPLNG!=0.0";
+        String sql = "select F_EQUIPID,F_REMARK,F_MAPLNG,F_MAPLAT from T_BE_EQUIPMENTLIST where F_TYPEID='0010' and F_INSTALLTYPE=0 and F_MAPLNG!=0.0";
         final List<Point> points = new ArrayList<Point>();
         jdbcTemplate.query(sql, new RowCallbackHandler() {
             @Override
@@ -146,7 +148,7 @@ public class BaseDao {
     }
     /////////////////////////////////////////////////////
     public DataTable getAllGroups() {
-        String sql = "select * from T_BD_GROUP ORDER BY F_BUILDGROUPCODE";
+        String sql = "select * from T_BD_BUILDGROUPBASEINFO ORDER BY F_BUILDGROUPCODE";
         DataTable dataTable = new DataTable();
         final List<Group> groups = new ArrayList<Group>();
         jdbcTemplate.query(sql, new RowCallbackHandler() {
@@ -168,23 +170,23 @@ public class BaseDao {
 
     public boolean addGroup(Group group) {
         System.out.println(group.toString());
-        String sql = "insert into T_BD_GROUP(F_BUILDGROUPID,F_BUILDGROUPNAME,F_GROUPALIASNAME,F_GROUPDESC,F_BUILDGROUPCODE,F_AREA,F_OPERATION) values(sys_guid(),?,?,?,?,?,'N')";
+        String sql = "insert into T_BD_BUILDGROUPBASEINFO(F_BUILDGROUPID,F_BUILDGROUPNAME,F_GROUPALIASNAME,F_GROUPDESC,F_BUILDGROUPCODE,F_AREA,F_OPERATION) values(sys_guid(),?,?,?,?,?,'N')";
         Object[] args = { group.getName(), group.getAliasname(),group.getDesc(),group.getCode(),group.getArea() };
         int i = jdbcTemplate.update(sql, args);
         return i > 0;
     }
 
     public void deleteGroup(String id) {
-        String sql = "delete from T_BD_GROUP where F_BUILDGROUPID=?";
+        String sql = "delete from T_BD_BUILDGROUPBASEINFO where F_BUILDGROUPID=?";
         Object[] args = { id };
         jdbcTemplate.update(sql, args);
-        String sql1 = "delete from T_BD_GROUPBUILDRELA where F_BUILDGROUPID=?";
+        String sql1 = "delete from T_BD_BUILDGROUPRELAINFO where F_BUILDGROUPID=?";
         Object[] args1 = { id };
         jdbcTemplate.update(sql1, args1);
     }
 
     public Group getGroupById(String id) {
-        String sql = "select F_BUILDGROUPID,F_BUILDGROUPNAME,F_GROUPALIASNAME,F_GROUPDESC,F_BUILDGROUPCODE from T_BD_GROUP where F_BUILDGROUPID=?";
+        String sql = "select F_BUILDGROUPID,F_BUILDGROUPNAME,F_GROUPALIASNAME,F_GROUPDESC,F_BUILDGROUPCODE from T_BD_BUILDGROUPBASEINFO where F_BUILDGROUPID=?";
         Object[] args = { id };
         final Group group = new Group();
         jdbcTemplate.query(sql, args, new RowCallbackHandler() {
@@ -201,7 +203,7 @@ public class BaseDao {
     }
 
     public boolean updateGroupById(Group group) {
-        String sql = "update T_BD_GROUP set F_BUILDGROUPCODE=?,F_BUILDGROUPNAME=?,F_GROUPALIASNAME=?,F_GROUPDESC=?,F_AREA=?,F_OPERATION='U' where F_BUILDGROUPID=?";
+        String sql = "update T_BD_BUILDGROUPBASEINFO set F_BUILDGROUPCODE=?,F_BUILDGROUPNAME=?,F_GROUPALIASNAME=?,F_GROUPDESC=?,F_AREA=?,F_OPERATION='U' where F_BUILDGROUPID=?";
         Object[] args = { group.getCode(),group.getName(), group.getAliasname(),
                 group.getDesc(),group.getArea(), group.getId() };
         int i = jdbcTemplate.update(sql, args);
@@ -440,7 +442,7 @@ public class BaseDao {
 
     public void updateUserById(User user) {
         String sql = "update T_BS_USER set F_ACCOUNT=?,F_PASSWD=?,F_NAME=?,F_ROLEID=?,F_PHONE=?,F_EMAIL=?,F_REMARK=? where F_UUID=?";
-        Object[] args = { user.getAccount(),Md5.MD5(user.getPasswd()),user.getName(),user.getRoleid(),user.getPhone(),user.getEmail(),user.getRemark(),user.getUuid() };
+        Object[] args = { user.getAccount(), Md5.MD5(user.getPasswd()),user.getName(),user.getRoleid(),user.getPhone(),user.getEmail(),user.getRemark(),user.getUuid() };
         jdbcTemplate.update(sql, args);
     }
 
@@ -480,7 +482,7 @@ public class BaseDao {
     public boolean checkLogin(LoginForm loginForm) {
         String sql = "SELECT count(*) num FROM t_bs_user WHERE f_account=? and f_passwd=?";
         Object[] args = { loginForm.getId(),Md5.MD5(loginForm.getPasswd())};
-        return (Long)jdbcTemplate.queryForMap(sql, args).get("num") != 0L;
+        return ((BigDecimal)jdbcTemplate.queryForMap(sql, args).get("num")).intValue() != 0L;
     }
     /////////////////////////////////////////////////////
     public DataTable getAllRoles() {
@@ -871,7 +873,7 @@ public class BaseDao {
         return options;
     }
     ////////////////////////////////////////学科专业基础信息/////////////////////////////////////////
-    public DataTable  getAllDepartments() {
+    public DataTable getAllDepartments() {
         String sql = "select F_ID,F_CODE,F_NAME from T_BO_ORGAN where F_PID='00' and F_TYPECODE='B'";
         DataTable dataTable = new DataTable();
         final List<Organ> organs = new ArrayList<Organ>();
@@ -923,7 +925,7 @@ public class BaseDao {
     }
 
     //专业信息列表信息获取
-    public DataTable  getAllMajors() {
+    public DataTable getAllMajors() {
         String sql = "select * from T_BS_MAJOR";
         DataTable dataTable = new DataTable();
         final List<Major> majors = new ArrayList<Major>();
@@ -1038,16 +1040,16 @@ public class BaseDao {
     ////////////////////////////////////////////////////////////////
     public RecordsNum getRecordsNum(){
         RecordsNum recordsNum=new RecordsNum();
-        String sql="select count(*) num from T_BD_BUILD";
-        recordsNum.setBuild((int)jdbcTemplate.queryForMap(sql).get("num"));
+        String sql="select count(*) num from t_bd_buildbaseinfo";
+        recordsNum.setBuild(((BigDecimal)jdbcTemplate.queryForMap(sql).get("num")).intValue());
         sql="select count(*) num from t_bo_organ";
-        recordsNum.setOrgan((int)jdbcTemplate.queryForMap(sql).get("num"));
+        recordsNum.setOrgan(((BigDecimal)jdbcTemplate.queryForMap(sql).get("num")).intValue());
         sql="select count(*) num from t_be_gateway";
-        recordsNum.setGateway((int)jdbcTemplate.queryForMap(sql).get("num"));
+        recordsNum.setGateway(((BigDecimal)jdbcTemplate.queryForMap(sql).get("num")).intValue());
         sql="select count(*) num from t_be_ammeter where f_gateways_uuid!='#'";
-        recordsNum.setAmmeter((int)jdbcTemplate.queryForMap(sql).get("num"));
+        recordsNum.setAmmeter(((BigDecimal)jdbcTemplate.queryForMap(sql).get("num")).intValue());
         sql="select count(*) num from t_be_watermeter where f_gateways_uuid!='#'";
-        recordsNum.setWatermeter((int)jdbcTemplate.queryForMap(sql).get("num"));
+        recordsNum.setWatermeter(((BigDecimal)jdbcTemplate.queryForMap(sql).get("num")).intValue());
         return recordsNum;
     }
 

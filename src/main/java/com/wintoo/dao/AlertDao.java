@@ -15,13 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-@Transactional
+@Transactional(value = "primaryTransactionManager")
 public class AlertDao {
+
 	@Autowired
     @Qualifier("primaryJdbcTemplate")
 	private JdbcOperations jdbcTemplate;
 
-	public List<EquipState> getEquipState(EquipSearch equipSearch){
+	public List<EquipState> getEquipState(final EquipSearch equipSearch){
         final List<EquipState> equipStates = new ArrayList<EquipState>();
         String level=equipSearch.getLevel();
         String cond="";
@@ -35,52 +36,69 @@ public class AlertDao {
         if(level.equals("floor")) cond="AND a.F_FLOORID='"+equipSearch.getModel()+"'";
         else
         if(level.equals("room")) cond="AND a.F_ROOMID='"+equipSearch.getModel()+"'";
-        String sql = "select j.F_UUID,b.F_ENERGYITEMNAME,j.F_NEWEST_DATA,j.F_NEWEST_VALID_DATA,j.F_EQUIPMENT_STATUE,(sysdate-j.F_NEWEST_OPERATE_TIME) AS STATUS " +
-                "from T_RR_DEVICERELATION a,T_DT_ENERGYITEMDICT b, T_be_" + equipSearch.getType() + " j WHERE  a.F_ENERGYITEMCODE=b.F_ENERGYITEMCODE and  a.F_DEVICECODE=j.f_uuid  AND j.F_USE=1 "+cond;
+        String sql = "select g.F_UUID,g.F_EQUIPID,i.F_SUBTYPE,b.F_ENERGYITEMNAME,x.F_ADDRESS,j.F_PN,j.F_NEWEST_DATA,j.F_NEWEST_VALID_DATA,j.F_EQUIPMENT_STATUE,NVL(c.F_BUILDGROUPNAME,'') as GROUPNAME,NVL(d.F_BUILDNAME,'') as BUILDNAME,NVL(e.F_NAME,'') as FLOORNAME,NVL(f.F_NAME,'') AS ROOMNAME,(sysdate-j.F_NEWEST_OPERATE_TIME) AS STATUS " +
+                "from T_RR_DEVICERELATION a,T_DT_ENERGYITEMDICT b,T_BD_BUILDGROUPBASEINFO c,T_BD_BUILDBASEINFO d,T_BD_FLOOR e, T_BD_ROOM f, T_BE_EQUIPMENTLIST g, T_BE_EQUIPMENTTYPE i,T_be_" + equipSearch.getType() + " j ,T_BE_GATEWAY x " +
+                "WHERE  a.F_ENERGYITEMCODE=b.F_ENERGYITEMCODE AND a.F_BUILDGROUPID=c.f_buildgroupid(+) and a.F_BUILDCODE=d.F_BUILDID(+) and a.F_FLOORID=e.F_ID(+) and a.f_roomid=f.F_ID(+) " +
+                "and a.F_DEVICECODE=g.f_uuid and g.f_typeid=i.f_uuid and a.F_DEVICECODE=j.f_uuid and j.F_GATEWAYS_UUID=x.F_UUID AND j.F_USE=1 "+cond;
         //System.out.println(sql);
         jdbcTemplate.query(sql, new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet rs) throws SQLException {
                 EquipState equipState = new EquipState();
                 equipState.setEquipid(rs.getString("F_UUID"));
+                equipState.setEquip(rs.getString("F_EQUIPID"));
+                equipState.setSubtype(rs.getString("F_SUBTYPE"));
                 equipState.setEnergytype(rs.getString("F_ENERGYITEMNAME"));
-                if(rs.getDouble("F_NEWEST_DATA") == -1&&rs.getInt("F_EQUIPMENT_STATUE")>3)
-                    equipState.setStatus(2);//故障
-                else
-                if((rs.getDouble("STATUS") >= 0.0208))
+                equipState.setGroup(rs.getString("GROUPNAME"));
+                equipState.setBuild(rs.getString("BUILDNAME"));
+                equipState.setFloor(rs.getString("FLOORNAME"));
+                equipState.setRoom(rs.getString("ROOMNAME"));
+                equipState.setGateway(rs.getString("F_ADDRESS"));
+                equipState.setPn(rs.getString("F_PN"));
+                if((rs.getDouble("F_NEWEST_DATA") == -2)||(rs.getDouble("STATUS") >= 0.0208))
                     equipState.setStatus(1);//离线
                 else
-                if(rs.getDouble("F_NEWEST_VALID_DATA")>rs.getDouble("F_NEWEST_DATA")&&rs.getDouble("F_NEWEST_VALID_DATA")!=-1&&rs.getInt("F_EQUIPMENT_STATUE")==0)
+                if(rs.getDouble("F_NEWEST_DATA") == -1||rs.getInt("F_EQUIPMENT_STATUE")>3)
+                    equipState.setStatus(2);//故障
+                else
+                if(rs.getDouble("F_NEWEST_VALID_DATA")!=rs.getDouble("F_NEWEST_DATA")&&rs.getDouble("F_NEWEST_VALID_DATA")!=-1)
                     equipState.setStatus(3);//底度
+
                 equipStates.add(equipState);
             }
         });
 		return equipStates;
 	}
-    public DataTable getAllEquipAlerts(){
-        String sql ="SELECT a.f_uuid,b.F_EQUIPID,d.f_batch,a.F_TYPE,c.f_remarkinfo,a.F_STATUS,a.F_REMARK,a.F_INSERTTIME FROM T_EC_EQUIPALERT_RECORD a,T_BE_EQUIPMENTLIST b,T_BE_EQUIPMENTBATCH d,\n" +
-                "(SELECT f_uuid,F_REMARKINFO FROM T_BE_AMMETER WHERE F_REMARKINFO is not null UNION SELECT F_UUID,F_REMARKINFO FROM T_BE_WATERMETER WHERE F_REMARKINFO is not null) c\n" +
-                "WHERE a.F_EQUIPUUID=b.F_UUID and a.F_EQUIPUUID=c.f_uuid(+)and b.f_batchid=d.f_uuid";
-        final List<AlertEquipList> alertEquipLists=new ArrayList<AlertEquipList>();
-        jdbcTemplate.query(sql, new RowCallbackHandler() {
-            @Override
-            public void processRow(ResultSet rs) throws SQLException {
-                AlertEquipList alertEquipList=new AlertEquipList();
-                alertEquipList.setUuid(rs.getString(1));
-                alertEquipList.setEquipid(rs.getString(2));
-                alertEquipList.setSubtype(rs.getString(3));
-                alertEquipList.setType(rs.getString(4));
-                alertEquipList.setPlace(rs.getString(5));
-                alertEquipList.setStatus(rs.getString(6));
-                alertEquipList.setRemark(rs.getString(7));
-                alertEquipList.setTime(rs.getString(8));
-                alertEquipLists.add(alertEquipList);
-            }
-        });
-        DataTable dataTable=new DataTable();
-        dataTable.setData(alertEquipLists);
-        return dataTable;
-    }
+//    public List<ErrorValue> getAmErrorValues(String id){
+//        String sql="select F_DATATIME,F_ACTIVE,F_OLDACTIVE from T_AD_BAD_ENERGY_AMMETER WHERE F_DEVICECODE=? ";
+//        final List<ErrorValue> errorValues=new ArrayList<ErrorValue>();
+//        jdbcTemplate.query(sql,new Object[]{id}, new RowCallbackHandler() {
+//            @Override
+//            public void processRow(ResultSet rs) throws SQLException {
+//                ErrorValue errorValue=new ErrorValue();
+//                errorValue.setValue(rs.getDouble("F_ACTIVE"));
+//                errorValue.setOldvalue(rs.getDouble("F_OLDACTIVE"));
+//                errorValue.setTime(rs.getString("F_DATATIME"));
+//                errorValues.add(errorValue);
+//            }
+//        });
+//        return errorValues;
+//    }
+//    public List<ErrorValue> getWaterErrorValues(String id){
+//        String sql="select F_DATATIME,F_CONSUM,F_OLDCONSUM from T_AD_BAD_ENERGY_WATER WHERE F_DEVICECODE=?";
+//        final List<ErrorValue> errorValues=new ArrayList<ErrorValue>();
+//        jdbcTemplate.query(sql,new Object[]{id}, new RowCallbackHandler() {
+//            @Override
+//            public void processRow(ResultSet rs) throws SQLException {
+//                ErrorValue errorValue=new ErrorValue();
+//                errorValue.setValue(rs.getDouble("F_CONSUM"));
+//                errorValue.setOldvalue(rs.getDouble("F_OLDCONSUM"));
+//                errorValue.setTime(rs.getString("F_DATATIME"));
+//                errorValues.add(errorValue);
+//            }
+//        });
+//        return errorValues;
+//    }
 
     public List<ErrorValue> getAmErrorValues(String id){
         String sql="select F_DATATIME,F_ACTIVE from T_BE_BAD_DATA WHERE F_DEVICECODE=? ORDER BY F_DATATIME DESC ";
@@ -242,6 +260,34 @@ public class AlertDao {
         return dataTable;
     }
 
+    public DataTable getAllEquipAlerts(){
+        String sql ="select  a.F_UUID,a.F_EQUIPID,b.F_SUBTYPE,f.F_STATUS,f.F_REMARK,f.F_INSERTTIME,t.F_BUILDGROUPNAME,c.F_BUILDNAME,d.F_NAME AS D_F_NAME,e.F_NAME AS E_F_NAME,a.F_REMARK,b.F_TYPE " +
+                "from T_BD_BUILDGROUPRELAINFO h,T_BD_BUILDGROUPBASEINFO t,T_BE_EQUIPMENTLIST a,T_BE_EQUIPMENTTYPE b,T_BD_BUILDBASEINFO c,T_BD_FLOOR d,T_BD_ROOM e ,T_EC_EQUIPALERT_RECORD f " +
+                "where a.F_UUID=f.F_EQUIPUUID AND a.F_TYPEID=b.F_UUID AND a.F_BUILDID=c.F_BUILDID(+) AND a.F_FLOORID=d.F_ID(+) AND a.F_ROOMID=e.F_ID(+) AND h.F_BUILDID(+)=a.F_BUILDID AND t.F_BUILDGROUPID(+)=h.F_BUILDGROUPID ORDER BY f.F_INSERTTIME DESC ";
+        final List<AlertEquipList> alertEquipLists=new ArrayList<AlertEquipList>();
+        jdbcTemplate.query(sql, new RowCallbackHandler() {
+            @Override
+            public void processRow(ResultSet rs) throws SQLException {
+                AlertEquipList alertEquipList=new AlertEquipList();
+                alertEquipList.setUuid(rs.getString(1));
+                alertEquipList.setEquipid(rs.getString(2));
+                alertEquipList.setSubtype(rs.getString(3));
+                alertEquipList.setStatus(rs.getString(4));
+                alertEquipList.setRemark(rs.getString(5));
+                alertEquipList.setTime(rs.getString(6));
+                alertEquipList.setGroup(rs.getString(7));
+                alertEquipList.setBuild(rs.getString(8));
+                alertEquipList.setFloor(rs.getString(9));
+                alertEquipList.setRoom(rs.getString(10));
+                alertEquipList.setPlace(rs.getString(11));
+                alertEquipList.setType(rs.getString(12));
+                alertEquipLists.add(alertEquipList);
+            }
+        });
+        DataTable dataTable=new DataTable();
+        dataTable.setData(alertEquipLists);
+        return dataTable;
+    }
 
     public DataTable getAllBaoguanAlerts(){
         String sql = "SELECT F_VIOLATION_ID,F_NAME,F_USAGE,F_GQUSAGE,F_LATITUDE,F_LONGITUDE,to_char(F_TIME,'yyyy-mm-dd hh24:mi'),f_uuid from T_EC_BAOGUAN_RECORD ";
@@ -283,7 +329,7 @@ public class AlertDao {
     }
 
     public  void setWhiteList(String type,String level,String id){
-        //System.out.println(type+"@"+level+"@"+id);
+        System.out.println(type+"@"+level+"@"+id);
         String sql="INSERT INTO T_EC_WHITELIST(F_ID,F_LEVEL,F_TYPE) VALUES(?,?,?)";
         Object[] args={id,Integer.parseInt(level),Integer.parseInt(type)};
         jdbcTemplate.update(sql,args);
@@ -327,25 +373,26 @@ public class AlertDao {
     }
 
     public  List<AmRankList> getAmRankList(String time){
+        System.out.println(time);
         String[] times=time.split(",");
         String sql =null;
-                //System.out.println(times[0]+":"+times[1]);
         if(times[2].equals("0"))
-            sql = "SELECT a.F_BUILDGROUPNAME||'-'||b.F_BUILDNAME||'-'||d.F_NAME||'-'||e.F_NAME as buildname,f.* from T_BD_GROUP a,T_BD_BUILD b,T_BD_GROUPBUILDRELA c,T_BD_FLOOR d,T_BD_ROOM e," +
+            sql = "SELECT a.F_BUILDGROUPNAME||'-'||b.F_BUILDNAME||'-'||d.F_NAME||'-'||e.F_NAME as buildname,f.* from T_BD_BUILDGROUPBASEINFO a,T_BD_BUILDBASEINFO b,T_BD_BUILDGROUPRELAINFO c,T_BD_FLOOR d,T_BD_ROOM e," +
                 "(select F_BUILDID,F_ENERGYITEMCODE,F_BUILDLEVEL,sum(F_VALUE) from T_EC_BUILD_HOUR where F_BUILDLEVEL=0 and F_STARTTIME>=to_date(?,'yyyy/mm/dd hh24:mi') " +
                 "and F_STARTTIME<to_date(?,'yyyy/mm/dd hh24:mi')  and F_ENERGYITEMCODE like '%00' group by F_BUILDID,F_ENERGYITEMCODE,F_BUILDLEVEL order by F_BUILDID) f " +
                 "where a.F_BUILDGROUPID=c.F_BUILDGROUPID and b.F_BUILDID=c.F_BUILDID and b.F_BUILDID=d.F_BUILDID and d.F_ID=e.F_FLOORID and e.F_ID=f.f_buildid and f.f_buildid not in (SELECT f_id from T_EC_WHITELIST)";
         else if(times[2].equals("1"))
-            sql = "SELECT a.F_BUILDGROUPNAME||'-'||b.F_BUILDNAME||'-'||d.F_NAME as buildname,f.* from T_BD_GROUP a,T_BD_BUILD b,T_BD_GROUPBUILDRELA c,T_BD_FLOOR d," +
+            sql = "SELECT a.F_BUILDGROUPNAME||'-'||b.F_BUILDNAME||'-'||d.F_NAME as buildname,f.* from T_BD_BUILDGROUPBASEINFO a,T_BD_BUILDBASEINFO b,T_BD_BUILDGROUPRELAINFO c,T_BD_FLOOR d," +
                     "(select F_BUILDID,F_ENERGYITEMCODE,F_BUILDLEVEL,sum(F_VALUE) from T_EC_BUILD_HOUR where F_BUILDLEVEL=1 and F_STARTTIME>=to_date(?,'yyyy/mm/dd hh24:mi') " +
                     "and F_STARTTIME<to_date(?,'yyyy/mm/dd hh24:mi')  and F_ENERGYITEMCODE like '%00' group by F_BUILDID,F_ENERGYITEMCODE,F_BUILDLEVEL order by F_BUILDID) f " +
                     "where a.F_BUILDGROUPID=c.F_BUILDGROUPID and b.F_BUILDID=c.F_BUILDID and b.F_BUILDID=d.F_BUILDID and d.F_ID=f.f_buildid and f.f_buildid not in (SELECT f_id from T_EC_WHITELIST)";
         else if(times[2].equals("2"))
-            sql = "SELECT a.F_BUILDGROUPNAME||'-'||b.F_BUILDNAME as buildname,f.* from T_BD_GROUP a,T_BD_BUILD b,T_BD_GROUPBUILDRELA c," +
+            sql = "SELECT a.F_BUILDGROUPNAME||'-'||b.F_BUILDNAME as buildname,f.* from T_BD_BUILDGROUPBASEINFO a,T_BD_BUILDBASEINFO b,T_BD_BUILDGROUPRELAINFO c," +
                     "(select F_BUILDID,F_ENERGYITEMCODE,F_BUILDLEVEL,sum(F_VALUE) from T_EC_BUILD_HOUR where F_BUILDLEVEL=2 and F_STARTTIME>=to_date(?,'yyyy/mm/dd hh24:mi') " +
                     "and F_STARTTIME<to_date(?,'yyyy/mm/dd hh24:mi')  and F_ENERGYITEMCODE like '%00' group by F_BUILDID,F_ENERGYITEMCODE,F_BUILDLEVEL order by F_BUILDID) f " +
                     "where a.F_BUILDGROUPID=c.F_BUILDGROUPID and b.F_BUILDID=c.F_BUILDID and b.F_BUILDID=f.f_buildid and f.f_buildid not in (SELECT f_id from T_EC_WHITELIST)";
         Object[] args={times[0],times[1]};
+        System.out.println(times[0]+":"+times[1]);
         final List<AmRankList> amRankLists=new ArrayList<AmRankList>();
         jdbcTemplate.query(sql,args, new RowCallbackHandler() {
             @Override
@@ -375,7 +422,6 @@ public class AlertDao {
                     amRankList.setDenergy(rs.getDouble(5));
                 else
                     amRankList.setZenergy(rs.getDouble(5));
-                amRankLists.set(amRankLists.size()-1,amRankList);
                 //System.out.println(rs.getString(3)+amRankList.getEnergy()+'-'+amRankList.getAenergy()+'-'+amRankList.getBenergy()+'-'+amRankList.getCenergy()+'-'+amRankList.getDenergy());
 
             }

@@ -1,6 +1,7 @@
 package com.wintoo.dao;
 
-import com.wintoo.model.*;
+import com.wintoo.model.DataTable;
+import com.wintoo.model.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -15,14 +16,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Repository
-@Transactional
+@Transactional(value = "primaryTransactionManager")
 public class LoginDao {
 	@Autowired
     @Qualifier("primaryJdbcTemplate")
-	private JdbcOperations jdbcTemplate;
+    private JdbcOperations jdbcTemplate;
 
     public DataTable getLogs(){
-        String sql="SELECT a.F_UUID,a.F_USERID,b.F_NAME,a.F_OPERATE,a.F_IP,a.F_TIME from T_BS_LOG a,T_BS_USER b where a.F_USERID=b.F_ACCOUNT ORDER BY a.f_uuid desc limit 100";
+        String sql="SELECT a.F_UUID,a.F_USERID,b.F_NAME,a.F_OPERATE,a.F_IP,a.F_TIME from T_BS_LOG a,T_BS_USER b where a.F_USERID=b.F_ACCOUNT";
         final List<Log> list=new LinkedList<Log>();
         jdbcTemplate.query(sql, new RowCallbackHandler() {
             @Override
@@ -43,7 +44,7 @@ public class LoginDao {
     }
 
     public void addLog(String userid,String operate,String ip){
-        String sql="insert into T_BS_LOG(F_USERID,F_OPERATE,F_IP) values(?,?,?)";
+        String sql="insert into T_BS_LOG(F_UUID,F_USERID,F_OPERATE,F_IP,F_TIME) values(sys_guid(),?,?,?,sysdate)";
         Object[] args={userid,operate,ip};
         jdbcTemplate.update(sql, args);
     }

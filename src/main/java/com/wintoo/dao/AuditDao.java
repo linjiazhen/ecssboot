@@ -1,6 +1,7 @@
 package com.wintoo.dao;
 
-import com.wintoo.model.*;
+import com.wintoo.model.AuditReport;
+import com.wintoo.model.DataTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
@@ -24,14 +25,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-@Transactional
+@Transactional(value = "primaryTransactionManager")
 public class AuditDao {
 	@Autowired
     @Qualifier("primaryJdbcTemplate")
-	private JdbcOperations jdbcTemplate;
+    private JdbcOperations jdbcTemplate;
 
     public DataTable getAllReports() {
-        String sql = "select a.f_uuid,a.f_groupid,a.f_buildid,c.F_BUILDGROUPNAME||'-'||b.F_BUILDNAME as buildname,a.f_date,a.f_author,a.F_FILENAME from T_BA_AUDIT a,T_BD_BUILD b,T_BD_GROUP c where a.F_BUILDID=b.F_BUILDID and a.F_GROUPID=c.F_BUILDGROUPID" ;
+        String sql = "select a.f_uuid,a.f_groupid,a.f_buildid,c.F_BUILDGROUPNAME||'-'||b.F_BUILDNAME as buildname,a.f_date,a.f_author,a.F_FILENAME from T_BA_AUDIT a,T_BD_BUILDBASEINFO b,T_BD_BUILDGROUPBASEINFO c where a.F_BUILDID=b.F_BUILDID and a.F_GROUPID=c.F_BUILDGROUPID" ;
         DataTable dataTable = new DataTable();
         final List<AuditReport> groups = new ArrayList<AuditReport>();
         jdbcTemplate.query(sql, new RowCallbackHandler() {

@@ -4,7 +4,7 @@ import com.wintoo.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcOperations;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,11 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-@Transactional
+@Transactional(value = "primaryTransactionManager")
 public class ControlDao {
 	@Autowired
     @Qualifier("primaryJdbcTemplate")
-	private JdbcOperations jdbcTemplate;
+    private JdbcOperations jdbcTemplate;
 
     public List<Ktxt> getKtxt(String type){
         final List<Ktxt> list=new ArrayList<Ktxt>();
