@@ -112,6 +112,7 @@ public class MaintenanceDao {
             }
         });
         dataTable.setData(builds);
+        System.out.printf("1234");
         return dataTable;
     }
 
@@ -1457,26 +1458,22 @@ public class MaintenanceDao {
         Object[] args={id};
         jdbcTemplate.update(sql,args);
     }
-
-    public EnergyChart getEnergyState(EnergySearch energySearch){
-        SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+    public  EnergyChart getEnergyState(EnergySearch energySearch){
         Energy energy= new Energy();
         String sql=null;
-        Object[] args={energySearch.getModelid(),energySearch.getStartdate(),energySearch.getEnddate()};
+        Object[] args=new Object[]{energySearch.getModelid(),energySearch.getStartdate(),energySearch.getModelid(),energySearch.getStartdate()};
 
         if(energySearch.getBasetime().equals("minutes")){
-            //sql="select F_CONSUM-(lag(F_CONSUM,1,F_CONSUM) over(order by F_DATATIME)),to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_WATERHISTORY WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy-mm-dd hh24:mi:ss')>=? AND to_char(F_DATATIME,'yyyy-mm-dd hh24:mi:ss')<=? ORDER BY time";
-            sql="select F_TIME_INTERVEL_ACTIVE,to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<? ORDER BY time";
+            sql="(select F_TIME_INTERVEL_ACTIVE,to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_15_ENERGY WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')=?)" +
+                    "UNION (select F_TIME_INTERVEL_ACTIVE,to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')=?) ORDER BY time";
+
+            energy.setName("15分钟");
         }
-        else
-        if(energySearch.getBasetime().equals("day")){
-            sql="select F_TIME_INTERVEL_ACTIVE,to_char(F_DATATIME,'yyyy-mm-dd') as day FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=2 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<=?  ORDER BY day";
+        else {
+            sql = "(select F_ACTIVE,to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_15_ENERGY WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')=?)" +
+                    "UNION (select F_ACTIVE,to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')=?) ORDER BY time";
+            energy.setName("表盘数");
         }
-        else
-        if(energySearch.getBasetime().equals("month")){
-            sql="select F_TIME_INTERVEL_ACTIVE,to_char(F_DATATIME,'yyyy-mm') as month FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=3 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<=?  order by month";
-        }
-        energy.setName("用电量");
         final List<Double> ldDoubles=new ArrayList<Double>();
         final List<String> categories=new ArrayList<String>();
         jdbcTemplate.query(sql,args, new RowCallbackHandler() {
@@ -1492,44 +1489,79 @@ public class MaintenanceDao {
         eChart.setCategories(categories);
         return eChart;
     }
-    public EnergyChart getWaterState(EnergySearch energySearch){
-        SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");
-        Energy energy= new Energy();
-        String sql=null;
-        Object[] args={energySearch.getModelid(),energySearch.getStartdate(),energySearch.getEnddate()};
 
-        if(energySearch.getBasetime().equals("minutes")){
-            //sql="select F_CONSUM-(lag(F_CONSUM,1,F_CONSUM) over(order by F_DATATIME)),to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_WATERHISTORY WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy-mm-dd hh24:mi:ss')>=? AND to_char(F_DATATIME,'yyyy-mm-dd hh24:mi:ss')<=? ORDER BY time";
-            sql="select F_TIME_INTERVEL_ACTIVE,to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<? ORDER BY time";
-        }
-        else
-        if(energySearch.getBasetime().equals("hour")){
-            sql="select sum(F_TIME_INTERVEL_ACTIVE),to_char(F_DATATIME,'hh24') as day FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<?  group by to_char(F_DATATIME,'hh24') ORDER BY day";
-        }
-        else
-        if(energySearch.getBasetime().equals("day")){
-            sql="select sum(F_TIME_INTERVEL_ACTIVE),to_char(F_DATATIME,'yyyy-mm-dd') as day FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<?  group by to_char(F_DATATIME,'yyyy-mm-dd') ORDER BY day";
-        }
-        else
-        if(energySearch.getBasetime().equals("month")){
-            sql="select sum(F_TIME_INTERVEL_ACTIVE),to_char(F_DATATIME,'yyyy-mm') as month FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<? group by to_char(F_DATATIME,'yyyy-mm') order by month";
-        }
-        energy.setName("用水量");
-        final List<Double> ldDoubles=new ArrayList<Double>();
-        final List<String> categories=new ArrayList<String>();
-        jdbcTemplate.query(sql,args, new RowCallbackHandler() {
-            @Override
-            public void processRow(ResultSet rs) throws SQLException {
-                ldDoubles.add(rs.getDouble(1));
-                categories.add(rs.getString(2));
-            }
-        });
-        energy.setData(ldDoubles);
-        EnergyChart eChart=new EnergyChart();
-        eChart.setEnergy(energy);
-        eChart.setCategories(categories);
-        return eChart;
-    }
+//    public EnergyChart getEnergyState(EnergySearch energySearch){
+//        SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+//        Energy energy= new Energy();
+//        String sql=null;
+//        Object[] args={energySearch.getModelid(),energySearch.getStartdate(),energySearch.getEnddate()};
+//
+//        if(energySearch.getBasetime().equals("minutes")){
+//            //sql="select F_CONSUM-(lag(F_CONSUM,1,F_CONSUM) over(order by F_DATATIME)),to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_WATERHISTORY WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy-mm-dd hh24:mi:ss')>=? AND to_char(F_DATATIME,'yyyy-mm-dd hh24:mi:ss')<=? ORDER BY time";
+//            sql="select F_TIME_INTERVEL_ACTIVE,to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<? ORDER BY time";
+//        }
+//        else
+//        if(energySearch.getBasetime().equals("day")){
+//            sql="select F_TIME_INTERVEL_ACTIVE,to_char(F_DATATIME,'yyyy-mm-dd') as day FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=2 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<=?  ORDER BY day";
+//        }
+//        else
+//        if(energySearch.getBasetime().equals("month")){
+//            sql="select F_TIME_INTERVEL_ACTIVE,to_char(F_DATATIME,'yyyy-mm') as month FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=3 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<=?  order by month";
+//        }
+//        energy.setName("用电量");
+//        final List<Double> ldDoubles=new ArrayList<Double>();
+//        final List<String> categories=new ArrayList<String>();
+//        jdbcTemplate.query(sql,args, new RowCallbackHandler() {
+//            @Override
+//            public void processRow(ResultSet rs) throws SQLException {
+//                ldDoubles.add(rs.getDouble(1));
+//                categories.add(rs.getString(2));
+//            }
+//        });
+//        energy.setData(ldDoubles);
+//        EnergyChart eChart=new EnergyChart();
+//        eChart.setEnergy(energy);
+//        eChart.setCategories(categories);
+//        return eChart;
+//    }
+//    public EnergyChart getWaterState(EnergySearch energySearch){
+//        SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+//        Energy energy= new Energy();
+//        String sql=null;
+//        Object[] args={energySearch.getModelid(),energySearch.getStartdate(),energySearch.getEnddate()};
+//
+//        if(energySearch.getBasetime().equals("minutes")){
+//            //sql="select F_CONSUM-(lag(F_CONSUM,1,F_CONSUM) over(order by F_DATATIME)),to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_WATERHISTORY WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy-mm-dd hh24:mi:ss')>=? AND to_char(F_DATATIME,'yyyy-mm-dd hh24:mi:ss')<=? ORDER BY time";
+//            sql="select F_TIME_INTERVEL_ACTIVE,to_char(F_DATATIME,'hh24:mi') as time FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<? ORDER BY time";
+//        }
+//        else
+//        if(energySearch.getBasetime().equals("hour")){
+//            sql="select sum(F_TIME_INTERVEL_ACTIVE),to_char(F_DATATIME,'hh24') as day FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<?  group by to_char(F_DATATIME,'hh24') ORDER BY day";
+//        }
+//        else
+//        if(energySearch.getBasetime().equals("day")){
+//            sql="select sum(F_TIME_INTERVEL_ACTIVE),to_char(F_DATATIME,'yyyy-mm-dd') as day FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<?  group by to_char(F_DATATIME,'yyyy-mm-dd') ORDER BY day";
+//        }
+//        else
+//        if(energySearch.getBasetime().equals("month")){
+//            sql="select sum(F_TIME_INTERVEL_ACTIVE),to_char(F_DATATIME,'yyyy-mm') as month FROM T_BE_15_ENERGY_BUFFER WHERE F_DEVICECODE=? AND F_TYPE=1 AND to_char(F_DATATIME,'yyyy/mm/dd')>=? AND to_char(F_DATATIME,'yyyy/mm/dd')<? group by to_char(F_DATATIME,'yyyy-mm') order by month";
+//        }
+//        energy.setName("用水量");
+//        final List<Double> ldDoubles=new ArrayList<Double>();
+//        final List<String> categories=new ArrayList<String>();
+//        jdbcTemplate.query(sql,args, new RowCallbackHandler() {
+//            @Override
+//            public void processRow(ResultSet rs) throws SQLException {
+//                ldDoubles.add(rs.getDouble(1));
+//                categories.add(rs.getString(2));
+//            }
+//        });
+//        energy.setData(ldDoubles);
+//        EnergyChart eChart=new EnergyChart();
+//        eChart.setEnergy(energy);
+//        eChart.setCategories(categories);
+//        return eChart;
+//    }
 //    /////////////////////////////////////////////////////////////
 //    public  EnergyChart getEnergyState(EnergySearch energySearch){
 //        Energy energy= new Energy();

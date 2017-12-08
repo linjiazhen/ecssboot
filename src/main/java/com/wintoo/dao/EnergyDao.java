@@ -84,15 +84,15 @@ public class EnergyDao {
 		String sql=null;
 		if(energySearch.getModel().equals("build")){
 			if(energySearch.getBasetime().equals("minutes")){
-				sql="select F_VALUE,to_char(F_STARTTIME,'hh24:mi') as time FROM T_EC_BUILD_15 WHERE F_BUILDID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') ORDER BY time";
+				sql="select F_VALUE,to_char(F_STARTTIME,'hh24:mi') as time FROM T_EC_BUILD_15_buffer WHERE F_BUILDID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') ORDER BY time";
 			}
 			else
 				if(energySearch.getBasetime().equals("hour")){
-					sql="select F_VALUE,to_char(F_STARTTIME,'hh24:mi') as hour FROM T_EC_BUILD_HOUR WHERE F_BUILDID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') ORDER BY hour";
+					sql="select F_VALUE,to_char(F_STARTTIME,'hh24:mi') as hour FROM T_EC_BUILD_HOUR_buffer WHERE F_BUILDID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') ORDER BY hour";
 				}
 				else
 					if(energySearch.getBasetime().equals("day")){
-						sql="select F_VALUE,to_char(F_STARTTIME,'yyyy/mm/dd') as day FROM T_EC_BUILD_DAY WHERE F_BUILDID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') ORDER BY day";
+						sql="select F_VALUE,to_char(F_STARTTIME,'yyyy/mm/dd') as day FROM T_EC_BUILD_DAY_buffer WHERE F_BUILDID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') ORDER BY day";
 					}
 					else
 						if(energySearch.getBasetime().equals("month")){
@@ -105,23 +105,23 @@ public class EnergyDao {
 		}
 		else{
 			if(energySearch.getBasetime().equals("minutes")){
-				sql="select F_VALUE,to_char(F_STARTTIME,'hh24:mi') as time FROM T_EC_ORGAN_15 WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') ORDER BY time";
+				sql="select F_VALUE,to_char(F_STARTTIME,'hh24:mi') as time FROM T_EC_ORGAN_15_buffer WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') ORDER BY time";
 			}
 			else
 				if(energySearch.getBasetime().equals("hour")){
-					sql="select F_VALUE,to_char(F_STARTTIME,'hh24:mi') as hour FROM T_EC_ORGAN_15 WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') ORDER BY hour";
+					sql="select F_VALUE,to_char(F_STARTTIME,'hh24:mi') as hour FROM T_EC_ORGAN_hour_buffer WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') ORDER BY hour";
 				}
 				else
 					if(energySearch.getBasetime().equals("day")){
-						sql="select F_VALUE,to_char(F_STARTTIME,'yyyy/mm/dd') as day FROM T_EC_ORGAN_15 WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') ORDER BY day";
+						sql="select F_VALUE,to_char(F_STARTTIME,'yyyy/mm/dd') as day FROM T_EC_ORGAN_day_buffer WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') ORDER BY day";
 					}
 					else
 						if(energySearch.getBasetime().equals("month")){
-							sql="select F_VALUE,to_char(F_STARTTIME,'yyyy/mm') as month FROM T_EC_ORGAN_15 WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') order by month";
+							sql="select F_VALUE,to_char(F_STARTTIME,'yyyy/mm') as month FROM T_EC_ORGAN_mon WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<to_date(?,'yyyy/mm/dd') order by month";
 						}
 						else
 							if(energySearch.getBasetime().equals("year")){
-								sql="select F_VALUE,to_char(F_STARTTIME,'yyyy') as year FROM T_EC_ORGAN_15 WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<=to_date(?,'yyyy/mm/dd') order by year";
+								sql="select F_VALUE,to_char(F_STARTTIME,'yyyy') as year FROM T_EC_ORGAN_year WHERE F_ORGANID=? AND F_ENERGYITEMCODE=? AND F_STARTTIME>=to_date(?,'yyyy/mm/dd') AND F_STARTTIME<=to_date(?,'yyyy/mm/dd') order by year";
 							}
 		}
 		energy.setName(energySearch.getEnergytype());

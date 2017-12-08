@@ -220,7 +220,7 @@ public class MaintenanceController extends BaseController {
     @RequestMapping(value="pickup.do",method= RequestMethod.POST)
     @ResponseBody
     public void pickup(@RequestBody String date, HttpSession session){
-        String path=session.getServletContext().getRealPath("/") + "static/files/";
+        String path=session.getServletContext().getRealPath("static/files/") ;
         maintenanceService.pickup(date,path);
     }
 

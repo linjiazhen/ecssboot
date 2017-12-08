@@ -28,9 +28,14 @@ ecss.watermeter=(function(){
             +'<div class="buttons">'
             +'<button class="btn btn-warning btn-sm" id="update">编辑</button>'
             +'<button class="btn btn-info btn-sm" id="refresh_para">刷新档案至网关</button>'
-            +'<button class="btn btn-success btn-sm" id="realdata">实时数据</button>'
-            +'<button class="btn btn-success btn-sm" id="inputdata">人工录入</button>'
-            +'<button class="btn btn-success btn-sm" id="setactive">设置底度</button>'
+            +'<div class="btn-group">'
+            +'<button type="button" class="btn btn-info btn-sm dropdown-toggle" id="datacollect" data-toggle="dropdown">数据采集<span class="caret"></span></button>'
+            +'<ul class="dropdown-menu" role="menu">'
+            +'<li><a id="realdata">实时数据</a></li>'
+            +'<li><a id="inputdata">人工录入</a></li>'
+            +'<li><a id="setactive">设置底度</a></li>'
+            +'</ul>'
+            +'</div>'
             +'</div>'
             +'<table class="table table-hover table-bordered" id="DTwatermeter"></table>'
             +'</div>',
@@ -220,7 +225,7 @@ ecss.watermeter=(function(){
                 [{label:'label',text:'设备编号',size:2},{label:'input',type:'text',name:'equip',size:4,disable:true},{label:'label',text:'安装位置',size:2},{label:'input',type:'text',name:'location',size:4,disable:true}],
                 [{label:'label',text:'设备类型',size:2},{label:'input',type:'text',name:'subtype',size:4,disable:true},{label:'label',text:'备注',size:2},{label:'input',type:'text',name:'remark',size:4,disable:true}],
                 [{label:'label',text:'查看选项',size:2},{label:'input',type:'radio',name:'opts',options:[{value:'energy',text:'能耗情况',checked:true},{value:'running',text:'运行情况'}],size:4}],
-                [{label:'label',text:'类型选择',size:2},{label:'input',type:'radio',name:'time',options:[{value:'active',text:'表盘读数'},{value:'minutes',text:'15分钟耗水',checked:true}],size:5,valid:{}}],
+                [{label:'label',text:'类型选择',size:2},{label:'input',type:'radio',name:'time',options:[{value:'real',text:'实时数据'},{value:'active',text:'表盘读数'},{value:'minutes',text:'15分钟耗水',checked:true}],size:5,valid:{}}],
                 [{label:'label',text:'时间选择',size:2},{label:'input',type:'daterange',name:'daterange',size:5,valid:{}}],
                 [{label:'label',text:'参数选择',size:2},{label:'input',type:'radio',name:'parameter',options:[{value:'ua',text:'流速',checked:true},{value:'p',text:'水压'}],size:8,valid:{}}]
             ],
@@ -291,7 +296,7 @@ ecss.watermeter=(function(){
         },
         jqueryMap={},
         setJqueryMap,   initModule,  setUse, setOnOff, getRealData, updateAmmeter,  addEvent,childFormat,sendCommand,initDisplay,
-        showDisplay,setTime,timeFunc,getData,inputData,setactive;
+        showDisplay,setTime,timeFunc,getData,inputData,setactive,getReals;
     setJqueryMap=function(){
         var $container=stateMap.$container;
         jqueryMap={
@@ -738,31 +743,63 @@ ecss.watermeter=(function(){
         }
         timeFunc();
     };
+    getReals=function () {
+        modelMap.model.post('getreal',function(d){
+            configMap.chartOption.xAxis[0].data.push(d.datatime);
+            configMap.chartOption.series[0].data.push(d.active);
+            if(configMap.urlOption.basetime=='real'){
+                jqueryMap.$energychart.setData(configMap.chartOption);
+                getReals();
+            }
+        },null,configMap.urlOption.equipid,'json');
+    };
     getData=function(){
         if(configMap.urlOption.opts=='energy'){
-            modelMap.model.post('getenergy',function(data){
-                console.log(data);
-                if(data.categories.length>0){
-                    data.energy.markPoint={
-                        data : [
-                            {type : 'max', name: '最大值'},
-                            {type : 'min', name: '最小值'}
+            if(configMap.urlOption.basetime!='real'){
+                modelMap.model.post('getenergy',function(data){
+                    console.log(data);
+                    if(data.categories.length>0){
+                        data.energy.markPoint={
+                            data : [
+                                {type : 'max', name: '最大值'},
+                                {type : 'min', name: '最小值'}
+                            ]
+                        };
+                        data.energy.markLine={
+                            data : [
+                                {type : 'average', name: '平均值'}
+                            ]
+                        };
+                        data.energy.type='line';
+                        configMap.chartOption.legend.data=[data.energy.name];
+                        configMap.chartOption.xAxis[0].data=data.categories;
+                        configMap.chartOption.series=[data.energy];
+                        jqueryMap.$energychart.setData(configMap.chartOption);
+                    }else{
+                        jqueryMap.$energychart.noData();
+                    }
+                },null,configMap.urlOption,'json');
+            }else {
+                jqueryMap.$energychart.noData();
+                configMap.chartOption.legend.data = ['实时数据获取'];
+                configMap.chartOption.xAxis[0].data = [];
+                configMap.chartOption.series = [{
+                    markPoint: {
+                        data: [
+                            {type: 'max', name: '最大值'},
+                            {type: 'min', name: '最小值'}
                         ]
-                    };
-                    data.energy.markLine={
-                        data : [
-                            {type : 'average', name: '平均值'}
+                    },
+                    markLine: {
+                        data: [
+                            {type: 'average', name: '平均值'}
                         ]
-                    };
-                    data.energy.type='line';
-                    configMap.chartOption.legend.data=[data.energy.name];
-                    configMap.chartOption.xAxis[0].data=data.categories;
-                    configMap.chartOption.series=[data.energy];
-                    jqueryMap.$energychart.setData(configMap.chartOption);
-                }else{
-                    jqueryMap.$energychart.noData();
-                }
-            },null,configMap.urlOption,'json');
+                    },
+                    type: 'line',
+                    data: []
+                }];
+                getReals();
+            }
         }
         else{
             configMap.runningOption.legend.data=[];

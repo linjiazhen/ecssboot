@@ -26,7 +26,8 @@ public class PublicService {
         return publicDao.getOrgans();
     }
 
-    public DataTable getPublic(){ return publicDao.getPublic(); }
-    public DataTable getPublicOrgan(){ return publicDao.getPublicOrgan(); }
-    public DataTable getPublicBulids(){ return publicDao.getPublicBulids(); }
+    public DataTable getPublicBuild(PublicCondition publicCondition){ return publicDao.getPublicBuild(publicCondition); }
+    public DataTable getPublicOrgan(PublicCondition publicCondition){ return publicDao.getPublicOrgan(publicCondition); }
+    public DataTable getPublicBuildItem(PublicCondition publicCondition){ return publicDao.getPublicBuildItem(publicCondition); }
+    public DataTable getPublicOrganItem(PublicCondition publicCondition){ return publicDao.getPublicOrganItem(publicCondition); }
 }

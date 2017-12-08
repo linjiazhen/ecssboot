@@ -18,7 +18,7 @@ ecss.pickupload=(function(){
             body:String()
             +'<div class="tablecontent">'
             +'<div class="buttons">'
-            +'<button class="btn btn-success btn-sm" id="pickup">打包</button>'
+            +'<button class="btn btn-success btn-sm" id="pickup">提取打包</button>'
             +'<button class="btn btn-warning btn-sm" id="upload">上报</button>'
             +'<button class="btn btn-danger btn-sm" id="delete">删除</button>'
             +'</div>'
@@ -31,6 +31,12 @@ ecss.pickupload=(function(){
                     { title:"数据时间","data": "datatime",
                         render: function(data, type, full){
                             return moment(full.datatime).format('YYYY/MM/DD');
+                        }},
+                    { title:"提取状态","data": "getDatastatus",
+                        render: function(data, type, full){
+                            if(data==0) return '<text class="text-success">成功</text>';
+                            else
+                                return '<text class="text-danger">失败</text>';
                         }},
                     { title:"打包状态","data": "pickstatus",
                         render: function(data, type, full){

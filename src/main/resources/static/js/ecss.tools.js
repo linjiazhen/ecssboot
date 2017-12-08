@@ -53,6 +53,10 @@ ecss.tools=(function(){
                 option.error = error;
             if (typeof data == 'string')
                 option.contentType='text/plain';
+            if(modelurl[operate]&&modelurl[operate].indexOf('http')!=-1){
+                option.dataType='jsonp';
+                option.jsonpCallback='callback';
+            }
             console.log(option.url);
             console.log(option.data);
             $.ajax(option);

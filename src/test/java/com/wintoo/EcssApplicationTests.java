@@ -20,4 +20,9 @@ public class EcssApplicationTests {
 		loginService.addLog("12344","123","192.108.0.1");
 	}
 
+	@Test
+	public void showAmList(){
+
+	}
+
 }

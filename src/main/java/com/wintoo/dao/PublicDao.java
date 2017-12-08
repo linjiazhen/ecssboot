@@ -1,9 +1,7 @@
 package com.wintoo.dao;
 
-import com.wintoo.model.DataTable;
-import com.wintoo.model.PublicBulidsInfo;
-import com.wintoo.model.PublicInfo;
-import com.wintoo.model.PublicOrganInfo;
+import com.alibaba.fastjson.JSON;
+import com.wintoo.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -53,7 +51,7 @@ public class PublicDao {
         return organs;
     }
 
-    public DataTable getPublic(){
+    public DataTable getPublicBuild(PublicCondition publicCondition){
         String sql="SELECT T3.buildcode, T3.buildName, T3.area, VALUE_D, VALUE_S, T3.FUNC, T3.peopleNum, t6.F_BUILDGROUPNAME FROM (select T1.F_BUILDID as ID, T1.F_BUILDcode AS buildcode, T1.F_TOTALAREA as area, T1.F_BUILDNAME as buildName, SUM(T2.F_VALUE) AS VALUE_D, T1.F_BUILDFUNC as FUNC, T1.F_PEOPLE as peopleNum from T_BD_BUILDBASEINFO T1, T_EC_BUILD_YEAR T2 where T2.F_BUILDID = T1.F_BUILDID AND substr(T2.F_ENERGYITEMCODE,1,2) = '01' AND T1.F_BUILDFUNC!='M' GROUP BY T1.F_BUILDID, T1.F_BUILDcode, T1.F_TOTALAREA, T1.F_BUILDNAME, T1.F_BUILDFUNC, T1.F_PEOPLE) T3, "
                 +"    (select T1.F_BUILDcode AS buildcode, T1.F_TOTALAREA as area, T1.F_BUILDNAME as buildName, SUM(T2.F_VALUE) AS VALUE_S from T_BD_BUILDBASEINFO T1, T_EC_BUILD_YEAR T2 where T2.F_BUILDID = T1.F_BUILDID AND substr(T2.F_ENERGYITEMCODE,1,2) = '02'  GROUP BY T1.F_BUILDcode, T1.F_TOTALAREA, T1.F_BUILDNAME) T4, T_BD_BUILDGROUPRELAINFO t5, T_BD_BUILDGROUPBASEINFO t6 where t3.buildcode=t4.buildcode(+) and t3.ID = t5.F_BUILDID and t5.F_BUILDGROUPID = t6.F_BUILDGROUPID order by t3.buildcode";
         final List<PublicInfo> list=new LinkedList<PublicInfo>();
@@ -97,7 +95,7 @@ public class PublicDao {
         return dataTable;
     }
 
-    public DataTable getPublicOrgan(){
+    public DataTable getPublicOrgan(PublicCondition publicCondition){
         String sql="SELECT T3.organID, T3.organName, VALUE_D, VALUE_S, T3.organArea, T3.people FROM"
                 +" (select T1.F_ID AS organID, T1.F_AREA AS organArea, T1.F_NAME AS organName, T1.F_PEOPLE AS people, SUM(T2.F_VALUE) AS VALUE_D from T_BO_ORGAN T1, T_EC_ORGAN_YEAR T2"
                 +" where T1.F_ID = T2.F_ORGANID AND T1.F_PID = 'j4_2' AND substr(T2.F_ENERGYITEMCODE,1,2) = '01' GROUP BY T1.F_ID, T1.F_AREA, T1.F_NAME, T1.F_PEOPLE) T3,"
@@ -145,8 +143,8 @@ public class PublicDao {
         return dataTable;
     }
 
-    public DataTable getPublicBulids(){
-
+    public DataTable getPublicBuildItem(PublicCondition publicCondition){
+       // System.out.println(JSON.toJSONString(publicCondition));
         String sql="SELECT  T8.buildcode, T8.buildName, T8.Total_engery, t81.ZMCZ_engery, t82.KTYD_engery, t83.DLYD_engery, t84.TSYD_engery, t6.F_BUILDGROUPNAME FROM "
                 +" (select T1.F_BUILDID as ID, T1.F_BUILDcode AS buildcode, T1.F_BUILDNAME as buildName, SUM(T2.F_VALUE) AS Total_engery from T_BD_BUILDBASEINFO T1, T_EC_BUILD_year T2 where T2.F_BUILDID = T1.F_BUILDID AND substr(T2.F_ENERGYITEMCODE,1,2) = '01' AND T1.F_BUILDFUNC!='M' GROUP BY t1.F_BUILDID, T1.F_BUILDcode, T1.F_BUILDNAME) T8,"
                 +" (select T1.F_BUILDcode AS buildcode, T1.F_BUILDNAME as buildName, SUM(T2.F_VALUE) AS ZMCZ_engery from T_BD_BUILDBASEINFO T1, T_EC_BUILD_year T2 where T2.F_BUILDID = T1.F_BUILDID AND substr(T2.F_ENERGYITEMCODE,1,3) = '01A' GROUP BY T1.F_BUILDcode, T1.F_BUILDNAME) T81,"
@@ -156,11 +154,11 @@ public class PublicDao {
                 +" where t8.ID = t5.F_BUILDID and t5.F_BUILDGROUPID = t6.F_BUILDGROUPID and t8.buildcode = t81.buildcode(+) and t8.buildcode = t82.buildcode(+) and t8.buildcode = t83.buildcode(+) and t8.buildcode = t84.buildcode(+) order by t8.buildcode";
         final List<PublicBulidsInfo> list=new LinkedList<PublicBulidsInfo>();
         String anothersql="SELECT  T8.Total_engery, t81.ZMCZ_engery, t82.KTYD_engery, t83.DLYD_engery, t84.TSYD_engery FROM " +
-                "(select SUM(F_VALUE) AS Total_engery from T_EC_BUILD_year where F_BUILDID = 'allofsumgroup' AND substr(F_ENERGYITEMCODE,1,2) = '01') T8, " +
-                "(select SUM(F_VALUE) AS ZMCZ_engery from T_EC_BUILD_year where F_BUILDID = 'allofsumgroup' AND substr(F_ENERGYITEMCODE,1,3) = '01A') T81, " +
-                "(select SUM(F_VALUE) AS KTYD_engery from T_EC_BUILD_year where F_BUILDID = 'allofsumgroup' AND substr(F_ENERGYITEMCODE,1,3) = '01B') T82, " +
-                "(select SUM(F_VALUE) AS DLYD_engery from T_EC_BUILD_year where F_BUILDID = 'allofsumgroup' AND substr(F_ENERGYITEMCODE,1,3) = '01C') T83, " +
-                "(select SUM(F_VALUE) AS TSYD_engery from T_EC_BUILD_year where F_BUILDID = 'allofsumgroup' AND substr(F_ENERGYITEMCODE,1,3) = '01D') T84 ";
+                "(select SUM(F_VALUE) AS Total_engery from T_EC_BUILD_YEAR where F_BUILDID = 'allofsumgroup' AND substr(F_ENERGYITEMCODE,1,2) = '01') T8, " +
+                "(select SUM(F_VALUE) AS ZMCZ_engery from T_EC_BUILD_YEAR where F_BUILDID = 'allofsumgroup' AND substr(F_ENERGYITEMCODE,1,3) = '01A') T81, " +
+                "(select SUM(F_VALUE) AS KTYD_engery from T_EC_BUILD_YEAR where F_BUILDID = 'allofsumgroup' AND substr(F_ENERGYITEMCODE,1,3) = '01B') T82, " +
+                "(select SUM(F_VALUE) AS DLYD_engery from T_EC_BUILD_YEAR where F_BUILDID = 'allofsumgroup' AND substr(F_ENERGYITEMCODE,1,3) = '01C') T83, " +
+                "(select SUM(F_VALUE) AS TSYD_engery from T_EC_BUILD_YEAR where F_BUILDID = 'allofsumgroup' AND substr(F_ENERGYITEMCODE,1,3) = '01D') T84 ";
         jdbcTemplate.query(anothersql, new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet rs) throws SQLException {
@@ -181,6 +179,55 @@ public class PublicDao {
                 PublicBulidsInfo publicbuildsInfo = new PublicBulidsInfo();
                 publicbuildsInfo.setbulidid(rs.getString(1));
                 publicbuildsInfo.setbulid(rs.getString(8)+"-"+rs.getString(2));
+                publicbuildsInfo.setTotalenergy(rs.getDouble(3));
+                publicbuildsInfo.setzmczenergy(rs.getDouble(4));
+                publicbuildsInfo.setktydenergy(rs.getDouble(5));
+                publicbuildsInfo.setdlydenergy(rs.getDouble(6));
+                publicbuildsInfo.settsydenergy(rs.getDouble(7));
+                list.add(publicbuildsInfo);
+            }
+        });
+        DataTable dataTable=new DataTable();
+        dataTable.setData(list);
+        return dataTable;
+    }
+
+    public DataTable getPublicOrganItem(PublicCondition publicCondition){
+        //System.out.println(JSON.toJSONString(publicCondition));
+        String sql="SELECT  T8.code, T8.Name, T8.Total_engery, t81.ZMCZ_engery, t82.KTYD_engery, t83.DLYD_engery, t84.TSYD_engery FROM "
+                +" (select T1.F_ID as code, T1.F_NAME as Name, SUM(T2.F_VALUE) AS Total_engery from T_BO_ORGAN T1, T_EC_ORGAN_year T2 where T2.F_ORGANID = T1.F_ID AND substr(T2.F_ENERGYITEMCODE,1,2) = '01' AND T1.F_PID='j4_2' GROUP BY T1.F_ID, T1.F_NAME) T8,"
+                +" (select T1.F_ID AS code, T1.F_NAME as name, SUM(T2.F_VALUE) AS ZMCZ_engery from T_BO_ORGAN T1, T_EC_ORGAN_YEAR T2 where T2.F_ORGANID = T1.F_ID AND substr(T2.F_ENERGYITEMCODE,1,3) = '01A' AND T1.F_PID='j4_2' GROUP BY T1.F_ID, T1.F_NAME) T81,"
+                +" (select T1.F_ID AS code, T1.F_NAME as name, SUM(T2.F_VALUE) AS KTYD_engery from T_BO_ORGAN T1, T_EC_ORGAN_YEAR T2 where T2.F_ORGANID = T1.F_ID AND substr(T2.F_ENERGYITEMCODE,1,3) = '01B' AND T1.F_PID='j4_2' GROUP BY T1.F_ID, T1.F_NAME) T82,"
+                +" (select T1.F_ID AS code, T1.F_NAME as name, SUM(T2.F_VALUE) AS DLYD_engery from T_BO_ORGAN T1, T_EC_ORGAN_YEAR T2 where T2.F_ORGANID = T1.F_ID AND substr(T2.F_ENERGYITEMCODE,1,3) = '01C' AND T1.F_PID='j4_2' GROUP BY T1.F_ID, T1.F_NAME) T83,"
+                +" (select T1.F_ID AS code, T1.F_NAME as name, SUM(T2.F_VALUE) AS TSYD_engery from T_BO_ORGAN T1, T_EC_ORGAN_YEAR T2 where T2.F_ORGANID = T1.F_ID AND substr(T2.F_ENERGYITEMCODE,1,3) = '01D' AND T1.F_PID='j4_2' GROUP BY T1.F_ID, T1.F_NAME) T84"
+                +" where  t8.code = t81.code(+) and t8.code = t82.code(+) and t8.code = t83.code(+) and t8.code = t84.code(+) order by t8.code";
+        final List<PublicBulidsInfo> list=new LinkedList<PublicBulidsInfo>();
+        String anothersql="SELECT  T8.Total_engery, t81.ZMCZ_engery, t82.KTYD_engery, t83.DLYD_engery, t84.TSYD_engery FROM " +
+                "(select SUM(F_VALUE) AS Total_engery from T_EC_ORGAN_YEAR where F_ORGANID = 'j4_2' AND substr(F_ENERGYITEMCODE,1,2) = '01') T8, " +
+                "(select SUM(F_VALUE) AS ZMCZ_engery from T_EC_ORGAN_YEAR where F_ORGANID = 'j4_2' AND substr(F_ENERGYITEMCODE,1,3) = '01A') T81, " +
+                "(select SUM(F_VALUE) AS KTYD_engery from T_EC_ORGAN_YEAR where F_ORGANID = 'j4_2' AND substr(F_ENERGYITEMCODE,1,3) = '01B') T82, " +
+                "(select SUM(F_VALUE) AS DLYD_engery from T_EC_ORGAN_YEAR where F_ORGANID = 'j4_2' AND substr(F_ENERGYITEMCODE,1,3) = '01C') T83, " +
+                "(select SUM(F_VALUE) AS TSYD_engery from T_EC_ORGAN_YEAR where F_ORGANID = 'j4_2' AND substr(F_ENERGYITEMCODE,1,3) = '01D') T84 ";
+        jdbcTemplate.query(anothersql, new RowCallbackHandler() {
+            @Override
+            public void processRow(ResultSet rs) throws SQLException {
+                PublicBulidsInfo publicbuildsInfo = new PublicBulidsInfo();
+                publicbuildsInfo.setbulidid("j4_2");
+                publicbuildsInfo.setbulid("福建工程学院全校");
+                publicbuildsInfo.setTotalenergy(rs.getDouble(1));
+                publicbuildsInfo.setzmczenergy(rs.getDouble(2));
+                publicbuildsInfo.setktydenergy(rs.getDouble(3));
+                publicbuildsInfo.setdlydenergy(rs.getDouble(4));
+                publicbuildsInfo.settsydenergy(rs.getDouble(5));
+                list.add(publicbuildsInfo);
+            }
+        });
+        jdbcTemplate.query(sql, new RowCallbackHandler() {
+            @Override
+            public void processRow(ResultSet rs) throws SQLException {
+                PublicBulidsInfo publicbuildsInfo = new PublicBulidsInfo();
+                publicbuildsInfo.setbulidid(rs.getString(1));
+                publicbuildsInfo.setbulid(rs.getString(2));
                 publicbuildsInfo.setTotalenergy(rs.getDouble(3));
                 publicbuildsInfo.setzmczenergy(rs.getDouble(4));
                 publicbuildsInfo.setktydenergy(rs.getDouble(5));

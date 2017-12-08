@@ -26,6 +26,7 @@ ecss.gateway=(function(){
                 +'<div class="tablecontent" class="form-group" style="margin-top:45px">'
                     +'<div class="buttons">'
                         +'<button class="btn btn-warning btn-sm" id="update">编辑</button>'
+                        +'<button class="btn btn-success btn-sm" id="processData">数据处理</button>'
                         +'<div class="btn-group">'
                             +'<button type="button" class="btn btn-success btn-sm dropdown-toggle" id="reset" data-toggle="dropdown">复位<span class="caret"></span></button>'
                             +'<ul class="dropdown-menu" role="menu">'
@@ -108,6 +109,47 @@ ecss.gateway=(function(){
                     } );
                 }
             },
+            equipTableOption:{
+                "ajax": { "url": "getallammeters.do", "type": "POST"},
+                "columns": [ {title:"序号", "data":   null, render:function (data, type, full, meta) {
+                            return meta.row+1;
+                        }},
+                    { title:"设备编号","data": "equip" },
+                    { title:"类型","data": "type"},
+                    { title:'测量点号',"data": "pn" },
+                    { title:"数据校验","data": "newest_data",
+                        "render":function (data) {
+                            if(data < 0)
+                                return "无效";
+                            else
+                                return "有效";
+                        }},
+                    { title:"最新表盘数","data": "newest_data",
+                        "render":function (data) {
+                            if(data < 0)
+                                return "-";
+                            else
+                                return data;
+                        }},
+                    { title:"15分钟耗能",data:"15_data"},
+                    { title:"数据时间","data":"newest_data_time"},
+                    { title:"采集时间","data":"createtime"},
+                    { title:"测量能耗","data":"energytype"},
+                    { title:"测量位置","data": "remarkinfo","width": "20%" }
+                ],
+                // "buttons": [
+                //     {
+                //         text:'保存',
+                //         extend:'excel',
+                //         className:'btn-info',
+                //         name:'表格'
+                //     }
+                // ],
+                "order": [[ 1, 'asc' ]],
+                "initComplete":function(){
+                    $.material.init();
+                }
+            },
             formOption:[
                 [{label:'label',text:'设备编号',size:2},{label:'input',type:'text',name:'equip',size:4,disable:true},{label:'label',text:'批号',size:2},{label:'input',type:'text',name:'batch',size:4,disable:true}],
                 [{label:'label',text:'类型',size:2},{label:'input',type:'text',name:'type',size:2,disable:true},{label:'input',type:'text',name:'subtype',size:2,disable:true},{label:'label',text:'设备型号',size:2},{label:'input',type:'text',name:'model',size:4,disable:true}],
@@ -127,7 +169,7 @@ ecss.gateway=(function(){
             model:new ecss.tools.makeModel(ecss.model.maintenance.gateway)
         },
         jqueryMap={},
-        setJqueryMap,   initModule,  setUse,  updateGateway, addEvent,childFormat,sendCommand;
+        setJqueryMap,   initModule,  setUse,  updateGateway,processData, addEvent,childFormat,sendCommand;
     setJqueryMap=function(){
         var $container=stateMap.$container;
         jqueryMap={
@@ -136,6 +178,8 @@ ecss.gateway=(function(){
             $dtgateway  :new ecss.tools.makeTable($container.find('#DTgateway'),configMap.tableOption),
             $modal      :new ecss.tools.makeModal($container,'网关参数设置','modal-lg'),
             $form       :new ecss.tools.makeForm($container.find('.modal-body').last(),configMap.formOption),
+            $equipModal :new ecss.tools.makeModal($container,'数据处理','modal-lg'),
+            $dtprocess:new ecss.tools.makeTable($container.find('.modal-body').html('<table class="table table-hover table-bordered" id="DTprocess"></table>').find('#DTprocess'),configMap.equipTableOption),
             $confirm     :new ecss.tools.makeModal($container),
             $batchchoice:$container.find('select[name=batch_choice]'),
             $modelchoice:$container.find('select[name=model_choice]'),
@@ -143,6 +187,7 @@ ecss.gateway=(function(){
             $statuschoice:$container.find('select[name=what_status]'),
             $gateway      :$container.find('#gateway'),
             $gatewayupdate  :$container.find('#update'),
+            $gatewayProcessData:$container.find('#processData'),
             $gatewayclear  :$container.find('.gatewayclear'),
             $gatewayreboot   :$container.find('.gatewayreboot'),
             $gatewaytiming:$container.find('.gatewaytiming'),
@@ -287,12 +332,17 @@ ecss.gateway=(function(){
             });
         }
     };
+    processData=function () {
+        console.log(1);
+        jqueryMap.$equipModal.show();
+    }
     initModule=function($container){
         stateMap.$container=$container;
         $container.html(configMap.main_html);
         setJqueryMap();
         addEvent();
         jqueryMap.$gatewayupdate.click(updateGateway);
+        jqueryMap.$gatewayProcessData.click(processData);
     };
     return{initModule:initModule};
 }());

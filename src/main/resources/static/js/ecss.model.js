@@ -198,6 +198,7 @@ ecss.model=(function(){
             energy:{
                 data:{},
                 url:{
+                    // getenergy:'http://120.24.251.166:80/MyWxProj/JzServlet',
                     getenergy:'getenergy.do',//input:{model:build|organ,modellevel:group|build|floor|room,modelid:model's uuid,energytypeid:energytype's uuid,energytype:energytype's name,startdate:xxxx/xx/xx,enddate:xxxx/xx/xx,basetime:minutes|hour|day|month|year,caltype:total|people|area,showtype:value|yony|chain}
                     //output:{energy:{name:energytype's name,data:[energy's value]},categories:[times]}
                     getwatermonthenergy:'getwatermonthenergy.do',
@@ -348,7 +349,10 @@ ecss.model=(function(){
             },
             public:{
                 url:{
-                    pubilc:'public.do'
+                    build:'publicbuild.do',
+                    builditem:'publicbuilditem.do',
+                    organ:'publicorgan.do',
+                    organitem:'publicorganitem.do'
                 }
             }
         },

@@ -41,15 +41,19 @@ public class PublicController extends BaseController {
        return publicService.getOrgans();
     }
 
-    @RequestMapping(value="public.do",method= RequestMethod.POST)
+    @RequestMapping(value="publicbuild.do",method= RequestMethod.POST)
     @ResponseBody
-    public  DataTable getPublic(){ 	return publicService.getPublic();	}
+    public  DataTable getPublicBuild(PublicCondition publicCondition){ 	return publicService.getPublicBuild(publicCondition);	}
 
 	@RequestMapping(value = "publicorgan.do",method = RequestMethod.POST)
 	@ResponseBody
-	public DataTable getPublicOrgan() { return publicService.getPublicOrgan();}
+	public DataTable getPublicOrgan(PublicCondition publicCondition) { return publicService.getPublicOrgan(publicCondition);}
 
-	@RequestMapping(value = "publicbulids.do",method = RequestMethod.POST)
+	@RequestMapping(value = "publicbuilditem.do",method = RequestMethod.POST)
 	@ResponseBody
-	public DataTable getPublicBulids() { return publicService.getPublicBulids();}
+	public DataTable getPublicBuildItem(PublicCondition publicCondition) { return publicService.getPublicBuildItem(publicCondition);}
+
+	@RequestMapping(value = "publicorganitem.do",method = RequestMethod.POST)
+	@ResponseBody
+	public DataTable getPublicOrganItem(PublicCondition publicCondition) { return publicService.getPublicOrganItem(publicCondition);}
 }
